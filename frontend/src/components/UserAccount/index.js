@@ -3,6 +3,7 @@ import {
   MailOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
+import constant from 'constant';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -22,7 +23,7 @@ function UserAccount({ avt, userName, onLogout }) {
         </div>
         {/* account setting */}
         <div className="user-account-item user-account--setting">
-          <Link to="/">
+          <Link to={constant.ROUTES.ACCOUNT}>
             <span>
               Tài khoản <SettingOutlined className="p-l-4" />
             </span>
