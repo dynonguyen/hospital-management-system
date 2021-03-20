@@ -1,0 +1,63 @@
+$main-color: #01c6b6;
+$secondary-color: #00786f;
+
+.navigation {
+  .header {
+    &-logo {
+      width: 8rem;
+      height: 8rem;
+    }
+
+    &-name {
+      color: #f1f1f1;
+      font-weight: bold;
+      font-size: 2.4rem;
+    }
+  }
+}
+
+nav {
+  width: 100%;
+  background-color: $main-color;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 1.6rem 3.2rem;
+
+  .control {
+    margin: 0;
+    box-shadow: 0 2px 4px 2px rgba($secondary-color, 0.35);
+    border-radius: 8px;
+
+    overflow: hidden;
+    &-item {
+      cursor: not-allowed;
+      padding: 12px;
+      width: 20%;
+      text-align: center;
+
+      // overlay
+      background-color: #111;
+      opacity: 0.1;
+
+      &:not(:last-child) {
+        border-right: solid 1px #eee;
+      }
+
+      img {
+        width: 6.4rem;
+        height: 6.4rem;
+      }
+
+      h3 {
+        color: #eee;
+      }
+
+      &.active {
+        cursor: pointer;
+        opacity: 1;
+        background: rgb(0, 77, 71);
+        background: linear-gradient(45deg, rgba(0, 77, 71, 1) 0%, rgba(0, 120, 111, 1) 100%);
+      }
+    }
+  }
+}
