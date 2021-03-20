@@ -1,0 +1,40 @@
+.user-account {
+  &--info {
+    cursor: pointer;
+    img {
+      border-radius: 50%;
+      max-height: 3.6rem;
+    }
+  }
+
+  &--setting {
+    border-left: solid 2px #ddd;
+    border-right: solid 2px #ddd;
+  }
+
+  &-item {
+    padding: 0 12px;
+
+    span {
+      color: #e5e5e5;
+    }
+  }
+
+  .name,
+  &-item span {
+    font-size: 1.6rem;
+    font-weight: 500;
+    transition: all 0.35;
+
+    &:hover,
+    &:active {
+      opacity: 0.8;
+      border-bottom: solid 1px;
+    }
+  }
+
+  .name {
+    margin: 0;
+    color: #e5e5e5;
+  }
+}

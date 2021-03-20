@@ -49,6 +49,15 @@
   &-wrap {
     flex-wrap: wrap;
   }
+  &-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &-center--ver {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .align {
