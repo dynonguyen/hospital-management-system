@@ -4,7 +4,7 @@ import React from 'react';
 import './index.scss';
 function Header() {
   return (
-    <div className="w-100vw h-100 header">
+    <div className="w-100 h-100 header">
       {/* user account login */}
       <div className="user-account-wrapper align-i-center p-tb-12">
         <UserAccount />
