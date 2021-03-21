@@ -28,6 +28,27 @@ function renderMenu(menu = []) {
   );
 }
 
+// fn: chuyển đổi keyItem sang text
+function convertModalKeyItem(key = 'admin') {
+  switch (key) {
+    case 'admin':
+      return 'Danh sách Quản trị viên';
+    case 'doctor':
+      return 'Danh sách Bác sĩ';
+    case 'financial':
+      return 'Danh sách nhân viên tài vụ';
+    case 'receptionist':
+      return 'Danh sách tiếp tân';
+    case 'pharmacist':
+      return 'Danh sách nhân viên bán thuốc';
+    case 'accounting':
+      return 'Danh sách nhân viên kế toán';
+    default:
+      return 'Danh sách Quản trị viên';
+  }
+}
+
 export default {
   renderMenu,
+  convertModalKeyItem,
 };
