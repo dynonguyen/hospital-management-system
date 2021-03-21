@@ -8,6 +8,7 @@ import { Col, Menu, Row } from 'antd';
 import helper from 'helper';
 import React from 'react';
 import './index.scss';
+import TotalStaff from './TotalStaff';
 
 // Menu chỉ bao gồm 1 cấp sub menu
 const menu = [
@@ -83,7 +84,9 @@ function AdminView() {
         </Col>
 
         {/* main content */}
-        <Col span={24} md={18}></Col>
+        <Col className="main-content" span={24} md={18}>
+          <TotalStaff />
+        </Col>
       </Row>
     </div>
   );
