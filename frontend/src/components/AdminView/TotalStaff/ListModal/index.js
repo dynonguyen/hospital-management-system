@@ -33,6 +33,7 @@ let columns = [
   {
     title: 'Tuổi',
     dataIndex: 'age',
+    sorter: (a, b) => a.age - b.age,
     responsive: ['sm'],
   },
   {

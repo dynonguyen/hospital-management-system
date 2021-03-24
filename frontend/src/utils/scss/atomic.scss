@@ -13,6 +13,46 @@
   padding-left: 16px;
 }
 
+.field-cus {
+  width: 100%;
+
+  padding: 4px 12px;
+  font-size: 1.4rem;
+
+  border-radius: 2px;
+  border: solid 1px #d9d9d9;
+
+  color: rgba(0, 0, 0, 0.85);
+  transition: all 0.3s;
+  outline: none;
+
+  &::-webkit-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::-moz-placeholder {
+    color: #d9d9d9;
+  }
+
+  &:-ms-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::-ms-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::placeholder {
+    color: #d9d9d9;
+  }
+
+  &.large {
+    padding: 6px 12px;
+    font-size: 1.6rem;
+    height: 4rem;
+  }
+}
+
 @media only screen and (max-width: 767px) {
   .main-content {
     padding-left: 0;

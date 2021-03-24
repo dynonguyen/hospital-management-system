@@ -1,0 +1,13 @@
+.input-error {
+  border: solid 1px #ec4134 !important;
+  background-color: rgba(#ec4134, 0.08);
+}
+
+.text-error {
+  color: #ec4134;
+}
+
+.ani-error {
+  -webkit-animation: shake 0.5s ease backwards;
+  animation: shake 0.5s ease backwards;
+}

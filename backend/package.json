@@ -10,7 +10,8 @@
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
-		"morgan": "^1.10.0"
+		"morgan": "^1.10.0",
+		"oracledb": "^5.1.0"
 	},
 	"scripts": {
 		"start": "node index.js",
