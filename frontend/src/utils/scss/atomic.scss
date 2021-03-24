@@ -1,3 +1,61 @@
 .cur-pointer {
   cursor: pointer;
 }
+
+.control-box-shad {
+  box-shadow: 0px 2px 2px 4px rgba(#1e1e1e, 0.05);
+  padding: 16px 32px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.main-content {
+  padding-left: 16px;
+}
+
+.field-cus {
+  width: 100%;
+
+  padding: 4px 12px;
+  font-size: 1.4rem;
+
+  border-radius: 2px;
+  border: solid 1px #d9d9d9;
+
+  color: rgba(0, 0, 0, 0.85);
+  transition: all 0.3s;
+  outline: none;
+
+  &::-webkit-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::-moz-placeholder {
+    color: #d9d9d9;
+  }
+
+  &:-ms-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::-ms-input-placeholder {
+    color: #d9d9d9;
+  }
+
+  &::placeholder {
+    color: #d9d9d9;
+  }
+
+  &.large {
+    padding: 6px 12px;
+    font-size: 1.6rem;
+    height: 4rem;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .main-content {
+    padding-left: 0;
+    margin-top: 16px;
+  }
+}
