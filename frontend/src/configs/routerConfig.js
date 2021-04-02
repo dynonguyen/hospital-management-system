@@ -7,7 +7,7 @@ const NotFound = React.lazy(() => import('components/NotFound'));
 const Login = React.lazy(() => import('pages/Login'));
 const AddStaff = React.lazy(() => import('components/AdminView/AddStaff'));
 const TotalStaff = React.lazy(() => import('components/AdminView/TotalStaff'));
-
+const LoginPage = React.lazy(() => import('pages/Login'));
 // main route for app
 const routes = [
   {
@@ -33,6 +33,11 @@ const routes = [
     exact: true,
     isProtect: true,
     component: () => <>Account</>,
+  },
+  {
+    path: ROUTES.LOGIN,
+    exact: true,
+    component: () => <LoginPage />,
   },
 ];
 

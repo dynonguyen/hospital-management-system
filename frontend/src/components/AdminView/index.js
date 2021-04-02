@@ -40,38 +40,6 @@ const menu = [
       },
     ],
   },
-  // quản lý quyên
-  {
-    isSubMenu: true,
-    title: 'Quản lý quyền',
-    icon: <SettingOutlined />,
-    list: [
-      {
-        to: '/',
-        title: 'Xem quyền người dùng',
-      },
-      {
-        to: '/',
-        title: 'Cấp/Thu hồi quyền',
-      },
-    ],
-  },
-  // nhật ký hệ thống
-  {
-    isSubMenu: true,
-    title: 'Nhật ký hệ thống',
-    icon: <FileTextOutlined />,
-    list: [
-      {
-        to: '/',
-        title: 'Hành động người dùng',
-      },
-      {
-        to: '/',
-        title: 'Nhật ký cấp nhật lương',
-      },
-    ],
-  },
 ];
 
 function AdminView() {

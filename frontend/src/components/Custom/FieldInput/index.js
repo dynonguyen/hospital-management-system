@@ -8,15 +8,22 @@ function FieldInput({
   errors,
   isLarge,
   type,
+  onlyLabel,
+  label,
   ...rest
 }) {
   return (
     <>
+      {label !== '' && (
+        <label className="field-cus-label" htmlFor={name}>
+          {label}
+        </label>
+      )}
       <input
         name={name}
         type={type}
         ref={register}
-        placeholder={placeholder}
+        placeholder={onlyLabel ? '' : placeholder}
         className={`field-cus ${isLarge ? 'large' : ''} ${
           errors ? 'input-error ani-error' : ''
         }`}
@@ -29,6 +36,8 @@ function FieldInput({
 
 FieldInput.propTypes = {
   errors: PropTypes.object,
+  onlyLabel: PropTypes.bool,
+  label: PropTypes.string,
   isLarge: PropTypes.bool,
   name: PropTypes.string,
   placeholder: PropTypes.string,
@@ -39,6 +48,8 @@ FieldInput.propTypes = {
 FieldInput.defaultProps = {
   isLarge: true,
   type: 'text',
+  label: '',
+  onlyLabel: false,
 };
 
 export default FieldInput;
