@@ -3,6 +3,7 @@ export default {
     HOME: '/',
     NOTFOUND: '/notfound',
     ACCOUNT: '/account',
+    LOGIN: '/login',
     ADMIN: {
       ROOT: '/admin',
       VIEW_LIST: '/admin/view-list',

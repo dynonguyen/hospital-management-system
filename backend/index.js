@@ -27,42 +27,9 @@ app.use(express.urlencoded({ limit: constant.MAX_SIZE_JSON_REQUEST }));
 app.use(cookieParser());
 app.use(cors(corsConfig));
 
-const oracledb = require('oracledb');
-
-oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
-oracledb.getConnection({
-	user: 'hr',
-	password: '2504',
-	connectString: 'localhost/xe',
-});
-
-async function run() {
-	let connection;
-
-	try {
-		connection = await oracledb.getConnection({
-			user: 'hr',
-			password: '2504',
-			connectString: 'localhost/xe',
-		});
-		const id = 1;
-		const result = await connection.execute(`select * from hr where id=${1}`);
-		console.log('result: ', result.rows[0].NAME);
-	} catch (err) {
-		console.error(err);
-	} finally {
-		if (connection) {
-			try {
-				await connection.close();
-			} catch (err) {
-				g;
-				console.error(err);
-			}
-		}
-	}
-}
-
-run();
+// =================== Api ===================== //
+const loginApi = require('./src/apis/login.api');
+app.use('/apis/login', loginApi);
 
 // =================== Listener ===================== //
 app.listen(PORT, () => {
