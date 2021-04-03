@@ -6,7 +6,9 @@ import logoUrl from 'assets/images/logo.png';
 import FieldInput from 'components/Custom/FieldInput';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { setUser } from 'redux/slices/user.slice';
 import * as yup from 'yup';
 import './index.scss';
 
@@ -24,11 +26,16 @@ function LoginPage() {
     resolver: yupResolver(schema),
   });
   const inputRef = useRef(null);
+  const dispatch = useDispatch();
 
+  // event on login
   const onLogin = async ({ username, password }) => {
     try {
       const response = await loginApi.postLogin(username, password);
       if (response && response.status === 200) {
+        // set is auth
+        dispatch(setUser(response.data.username));
+
         message.success(response.data.message, 2);
       }
     } catch (error) {
@@ -43,8 +50,8 @@ function LoginPage() {
     }
   };
 
-  // modal
-  function confirm() {
+  // modal notify forgot password
+  function notifyForgotPw() {
     Modal.confirm({
       title: 'Quên mật khẩu ?',
       icon: <ExclamationCircleOutlined />,
@@ -93,7 +100,7 @@ function LoginPage() {
           </div>
 
           <div className="flex-center-between">
-            <span className="forgot-pw" onClick={confirm}>
+            <span className="forgot-pw" onClick={notifyForgotPw}>
               Quên mật khẩu?
             </span>
             <Button
