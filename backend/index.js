@@ -27,8 +27,6 @@ app.use(express.urlencoded({ limit: constant.MAX_SIZE_JSON_REQUEST }));
 app.use(cookieParser());
 app.use(cors(corsConfig));
 
-// app.use('/apis/account')
-
 // =================== Api ===================== //
 const loginApi = require('./src/apis/login.api');
 app.use('/apis/login', loginApi);

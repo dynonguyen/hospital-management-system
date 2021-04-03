@@ -8,6 +8,7 @@ const Login = React.lazy(() => import('pages/Login'));
 const AddStaff = React.lazy(() => import('components/AdminView/AddStaff'));
 const TotalStaff = React.lazy(() => import('components/AdminView/TotalStaff'));
 const LoginPage = React.lazy(() => import('pages/Login'));
+
 // main route for app
 const routes = [
   {
@@ -38,6 +39,28 @@ const routes = [
     path: ROUTES.LOGIN,
     exact: true,
     component: () => <LoginPage />,
+  },
+];
+
+// route for admin page
+const adminRoutes = [
+  {
+    path: ROUTES.ADMIN.VIEW_LIST,
+    exact: false,
+    isProtect: true,
+    component: () => <TotalStaff />,
+  },
+  {
+    path: ROUTES.ADMIN.ADD_STAFF,
+    exact: false,
+    isProtect: true,
+    component: () => <AddStaff isDoctor={false} />,
+  },
+  {
+    path: ROUTES.ADMIN.ADD_DOCTOR,
+    exact: false,
+    isProtect: true,
+    component: () => <AddStaff isDoctor={true} />,
   },
 ];
 
