@@ -4,11 +4,13 @@ export default {
     NOTFOUND: '/notfound',
     ACCOUNT: '/account',
     LOGIN: '/login',
-    ADMIN: {
-      ROOT: '/admin',
-      VIEW_LIST: '/admin/view-list',
-      ADD_STAFF: '/admin/add-staff',
-      ADD_DOCTOR: '/admin/add-doctor',
+    MANAGE: {
+      ROOT: '/manage',
+      VIEW_LIST: '/manage/view-list',
+      ADD_STAFF: '/manage/add-staff',
+      ADD_DOCTOR: '/manage/add-doctor',
     },
   },
+
+  ROLES: ['sys_admin'],
 };

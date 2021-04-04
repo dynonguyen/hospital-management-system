@@ -5,12 +5,23 @@ import { Route } from 'react-router';
 const { ROUTES } = constant;
 const NotFound = React.lazy(() => import('components/NotFound'));
 const Login = React.lazy(() => import('pages/Login'));
-const AddStaff = React.lazy(() => import('components/AdminView/AddStaff'));
-const TotalStaff = React.lazy(() => import('components/AdminView/TotalStaff'));
+const AddStaff = React.lazy(() => import('components/ManageView/AddStaff'));
+const TotalStaff = React.lazy(() => import('components/ManageView/TotalStaff'));
 const LoginPage = React.lazy(() => import('pages/Login'));
+const SystemAdmin = React.lazy(() => import('components/SystemAdmin'));
+
+// system admin route
+const systemRoutes = [
+  {
+    path: ROUTES.HOME,
+    exact: false,
+    isProtect: true,
+    component: () => <SystemAdmin />,
+  },
+];
 
 // main route for app
-const routes = [
+const mainRoutes = [
   {
     path: ROUTES.HOME,
     exact: true,
@@ -18,7 +29,7 @@ const routes = [
     component: () => <HomePage />,
   },
   {
-    path: ROUTES.ADMIN.ROOT,
+    path: ROUTES.MANAGE.ROOT,
     exact: false,
     isProtect: true,
     component: () => <HomePage />,
@@ -42,22 +53,22 @@ const routes = [
   },
 ];
 
-// route for admin page
-const adminRoutes = [
+// route for manager page
+const manageRoutes = [
   {
-    path: ROUTES.ADMIN.VIEW_LIST,
+    path: ROUTES.MANAGE.VIEW_LIST,
     exact: false,
     isProtect: true,
     component: () => <TotalStaff />,
   },
   {
-    path: ROUTES.ADMIN.ADD_STAFF,
+    path: ROUTES.MANAGE.ADD_STAFF,
     exact: false,
     isProtect: true,
     component: () => <AddStaff isDoctor={false} />,
   },
   {
-    path: ROUTES.ADMIN.ADD_DOCTOR,
+    path: ROUTES.MANAGE.ADD_DOCTOR,
     exact: false,
     isProtect: true,
     component: () => <AddStaff isDoctor={true} />,
@@ -80,7 +91,8 @@ const renderRoutes = (routes, isAuth = false) => {
 };
 
 export default {
-  routes,
-  adminRoutes,
+  mainRoutes,
+  manageRoutes,
+  systemRoutes,
   renderRoutes,
 };

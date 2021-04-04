@@ -29,7 +29,9 @@ app.use(cors(corsConfig));
 
 // =================== Api ===================== //
 const loginApi = require('./src/apis/login.api');
+const systemApi = require('./src/apis/system.api');
 app.use('/apis/login', loginApi);
+app.use('/apis/system', systemApi);
 
 // =================== Listener ===================== //
 app.listen(PORT, () => {

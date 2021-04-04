@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import loginApi from 'apis/loginApi';
+import helper from 'helper';
 
 // get user
 export const getUser = createAsyncThunk(
@@ -8,8 +9,8 @@ export const getUser = createAsyncThunk(
     try {
       const result = await loginApi.getUser();
       if (result) {
-        const { username } = result.data;
-        thunkAPI.dispatch(setUser(username));
+        const { username, roles } = result.data;
+        thunkAPI.dispatch(setUser({ username, roles }));
       }
     } catch (error) {
       thunkAPI.dispatch(setUser(''));
@@ -19,10 +20,11 @@ export const getUser = createAsyncThunk(
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: { username: '' },
+  initialState: { username: '', role: 'default' },
   reducers: {
     setUser(state, action) {
-      state.username = action.payload;
+      state.username = action.payload.username;
+      state.role = helper.analystRole(action.payload.roles);
     },
   },
   extraReducers: {},

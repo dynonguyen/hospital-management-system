@@ -1,16 +1,15 @@
-import AdminView from 'components/AdminView';
 import Header from 'components/Header';
+import ManageView from 'components/ManageView';
 import SystemAdmin from 'components/SystemAdmin';
 import React from 'react';
 
 function HomePage() {
   return (
     <>
-      {/* <Header />
+      <Header />
       <div className="container">
-        <AdminView />
-      </div> */}
-      <SystemAdmin />
+        <ManageView />
+      </div>
     </>
   );
 }

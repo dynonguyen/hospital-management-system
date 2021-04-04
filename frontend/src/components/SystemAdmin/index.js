@@ -11,10 +11,14 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip } from 'antd';
+import { Menu, message, Tooltip } from 'antd';
+import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
+import SystemDashboard from 'pages/System/Dashboard';
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { setUser } from 'redux/slices/user.slice';
 import './index.scss';
 
 const { SubMenu } = Menu;
@@ -72,6 +76,8 @@ const menuList = [
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState('dashboard');
+  const { username } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   // event: set key active
   const onSelectMenuItem = (key) => {
@@ -106,6 +112,21 @@ function SystemAdmin() {
     );
   }
 
+  // event: logout
+  const onLogout = async () => {
+    try {
+      const response = await loginApi.postLogout();
+      if (response && response.status === 200) {
+        message.success('Đăng xuất thành công', 1);
+        setTimeout(() => {
+          dispatch(setUser('', []));
+        }, 1500);
+      }
+    } catch (error) {
+      message.error('Đăng xuất thất bại');
+    }
+  };
+
   return (
     <div className="system-admin w-100vw flex-col">
       {/* Header */}
@@ -136,9 +157,9 @@ function SystemAdmin() {
             </li>
             <li className="info-item d-flex">
               <UserOutlined className="icon m-r-4" />
-              <span className="fw-b">Admin 01</span>
+              <span className="fw-b">{username}</span>
             </li>
-            <li className="info-item d-flex">
+            <li className="info-item d-flex" onClick={onLogout}>
               <ExportOutlined className="icon m-r-4" />
               <span className="fw-b">Đăng xuất</span>
             </li>
@@ -146,19 +167,23 @@ function SystemAdmin() {
         </div>
       </div>
 
-      {/* Menu */}
       <div className="d-flex flex-grow-1">
+        {/* Menu */}
         <div
           className={`system-admin-menu ${inlineCollapsed ? 'collapsed' : ''}`}>
           <Menu
             className="h-100"
             defaultSelectedKeys={menuList[0].key}
-            defaultOpenKeys={['privileges']}
             inlineCollapsed={inlineCollapsed}
             mode="inline"
             theme="dark">
             {renderMenu(menuList)}
           </Menu>
+        </div>
+
+        {/* Content */}
+        <div className="flex-grow-1 pos-rel">
+          <SystemDashboard />
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Menu } from 'antd';
+import constant from 'constant';
 import React from 'react';
 import { Link } from 'react-router-dom';
 const { SubMenu } = Menu;
@@ -48,7 +49,23 @@ function convertModalKeyItem(key = 'admin') {
   }
 }
 
+// fn: phân tích role dựa theo role list
+function analystRole(roles) {
+  if (!roles) return 'default';
+  const ROLE_LIST = constant.ROLES;
+  for (let i = 0; i < roles.length; ++i) {
+    for (let j = 0; j < ROLE_LIST.length; ++j) {
+      if (roles[i].toLowerCase() === ROLE_LIST[j].toLowerCase()) {
+        return roles[i].toLowerCase();
+      }
+    }
+  }
+
+  return 'default';
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
+  analystRole,
 };

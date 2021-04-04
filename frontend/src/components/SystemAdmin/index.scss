@@ -4,7 +4,7 @@
     height: 58px;
     box-shadow: 0 2px 5px 5px rgba(0, 0, 0, 0.06);
     .brand {
-      min-width: 36rem;
+      min-width: 28rem;
       background-color: #ea6661;
       padding: 6px 12px;
       img {
@@ -51,11 +51,12 @@
     }
   }
   &-menu {
-    width: 36rem;
+    min-width: 28rem;
+
     &.collapsed {
-      width: -webkit-max-content;
-      width: -moz-max-content;
-      width: max-content;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
     }
   }
 }

@@ -57,15 +57,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  &-center--ver {
-    display: flex;
-    align-items: center;
-  }
-  &-center-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+    &--ver {
+      display: flex;
+      align-items: center;
+    }
+
+    &-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &--col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
