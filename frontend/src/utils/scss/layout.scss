@@ -37,6 +37,10 @@
 
 // display-flex
 .flex {
+  &-col {
+    display: flex;
+    flex-direction: column;
+  }
   &-dir-col {
     flex-direction: column;
   }
