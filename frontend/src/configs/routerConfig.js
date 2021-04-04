@@ -64,28 +64,6 @@ const adminRoutes = [
   },
 ];
 
-// route for admin page
-const adminRoutes = [
-  {
-    path: ROUTES.ADMIN.VIEW_LIST,
-    exact: false,
-    isProtect: true,
-    component: () => <TotalStaff />,
-  },
-  {
-    path: ROUTES.ADMIN.ADD_STAFF,
-    exact: false,
-    isProtect: true,
-    component: () => <AddStaff isDoctor={false} />,
-  },
-  {
-    path: ROUTES.ADMIN.ADD_DOCTOR,
-    exact: false,
-    isProtect: true,
-    component: () => <AddStaff isDoctor={true} />,
-  },
-];
-
 const renderRoutes = (routes, isAuth = false) => {
   return routes.map((route, index) => {
     const { path, exact, component, isProtect } = route;
