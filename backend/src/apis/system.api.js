@@ -5,4 +5,6 @@ systemApi.get('/dash', systemController.getStatisticDash);
 
 systemApi.get('/user-list', systemController.getUserList);
 
+systemApi.get('/user', systemController.getDetailUser);
+
 module.exports = systemApi;

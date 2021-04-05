@@ -10,6 +10,10 @@ const systemApi = {
   getUserList: () => {
     return axiosClient.get(`${URL}/user-list`);
   },
+
+  getDetailUser: (userId) => {
+    return axiosClient.get(`${URL}/user`, { params: { userId } });
+  },
 };
 
 export default systemApi;

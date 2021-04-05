@@ -2,7 +2,10 @@ const oracle = require('../configs/oracle');
 const OracleDB = require('oracledb');
 
 exports.getStatisticDash = async (req, res, next) => {
-	const oracleConnect = await oracle.connect('admin', '2504');
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
 	try {
 		const sql = `
 			BEGIN
@@ -30,7 +33,11 @@ exports.getStatisticDash = async (req, res, next) => {
 };
 
 exports.getUserList = async (req, res, next) => {
-	const oracleConnect = await oracle.connect('admin', '2504');
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+
 	try {
 		const sql = `
 		SELECT User_Id,
@@ -45,6 +52,35 @@ exports.getUserList = async (req, res, next) => {
 		return res.status(200).json({ userList: result.rows });
 	} catch (error) {
 		console.error('GET USER LIST ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.getDetailUser = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { userId } = req.query;
+		const sql = `
+								SELECT User_Id,
+											Username,
+											Account_Status,
+											Lock_Date,
+											Expiry_Date,
+											Created,
+											Default_Tablespace,
+											Temporary_Tablespace,
+											Profile,
+											Authentication_Type
+								FROM Dba_Users WHERE USER_ID = ${userId}`;
+		const result = await oracleConnect.execute(sql);
+		if (result) return res.status(200).json({ user: result.rows[0] });
+	} catch (error) {
+		console.error('GET DETAIL USER ERROR: ', error);
 		return res.status(400).json({ message: 'failed' });
 	} finally {
 		oracleConnect.close();

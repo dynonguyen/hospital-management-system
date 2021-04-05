@@ -30,8 +30,10 @@ app.use(cors(corsConfig));
 // =================== Api ===================== //
 const loginApi = require('./src/apis/login.api');
 const systemApi = require('./src/apis/system.api');
+const { jwtAuthentication } = require('./src/middlewares/auth.middleware');
+
 app.use('/apis/login', loginApi);
-app.use('/apis/system', systemApi);
+app.use('/apis/system', jwtAuthentication, systemApi);
 
 // =================== Listener ===================== //
 app.listen(PORT, () => {
