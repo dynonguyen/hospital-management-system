@@ -1,0 +1,19 @@
+.action-icon {
+  transition: all 0.35s;
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    transform: scale(1.3);
+  }
+
+  &.view {
+    color: #40a9ff;
+  }
+  &.edit {
+    color: #7f6b00;
+  }
+  &.delete {
+    color: #e83f36;
+  }
+}

@@ -28,3 +28,25 @@ exports.getStatisticDash = async (req, res, next) => {
 		oracleConnect.close();
 	}
 };
+
+exports.getUserList = async (req, res, next) => {
+	const oracleConnect = await oracle.connect('admin', '2504');
+	try {
+		const sql = `
+		SELECT User_Id,
+						Username,
+						Account_Status,
+						Lock_Date,
+						Expiry_Date,
+						Created,
+						Default_Tablespace
+		FROM Dba_Users`;
+		const result = await oracleConnect.execute(sql);
+		return res.status(200).json({ userList: result.rows });
+	} catch (error) {
+		console.error('GET USER LIST ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
+};

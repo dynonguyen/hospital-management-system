@@ -15,6 +15,7 @@ import { Menu, message, Tooltip } from 'antd';
 import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
 import SystemDashboard from 'pages/System/Dashboard';
+import SystemUserList from 'pages/System/UserList';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -72,6 +73,22 @@ const menuList = [
     isSub: false,
   },
 ];
+
+const componentRender = [
+  {
+    key: 'dashboard',
+    component: <SystemDashboard />,
+  },
+  {
+    key: 'user-list',
+    component: <SystemUserList />,
+  },
+];
+
+function renderActiveComponent(key = 'dashboard', list = []) {
+  const result = list.find((item) => item.key === key);
+  return result ? result.component : <></>;
+}
 
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
@@ -183,7 +200,7 @@ function SystemAdmin() {
 
         {/* Content */}
         <div className="flex-grow-1 pos-rel">
-          <SystemDashboard />
+          {renderActiveComponent(activeKey, componentRender)}
         </div>
       </div>
     </div>

@@ -64,8 +64,15 @@ function analystRole(roles) {
   return 'default';
 }
 
+// fn: format date
+function formateDate(dateInput = new Date()) {
+  const date = new Date(dateInput);
+  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
   analystRole,
+  formateDate,
 };
