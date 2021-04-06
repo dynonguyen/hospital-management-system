@@ -128,6 +128,12 @@
   width: 100vw;
 }
 
+.w-max-content {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
 //max-width, max-height
 .max {
   &-w-100 {

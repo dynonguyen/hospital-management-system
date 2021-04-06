@@ -57,6 +57,13 @@ exports.postLogin = async (req, res, next) => {
 					'Đăng nhập thất bại. Người dùng không tồn tại hoắc sai mật khẩu',
 			});
 		}
+		// the account is locked
+		else if (errorNum === 28000) {
+			return res.status(401).json({
+				message: 'Tài khoản đã bị khoá. Hãy liên hệ với quản trị viên.',
+			});
+		}
+
 		// user lacks CREATE SESSION privilege; logon denied]
 		else if (errorNum === 1045) {
 			return res.status(401).json({

@@ -1,29 +1,41 @@
 const oracle = require('../configs/oracle');
 const OracleDB = require('oracledb');
 
+// danh sách câu truy vấn cho getStatisticDash
+const sqlDashList = [
+	`SELECT SUM(Value) / 1024 / 1024 AS totalSga FROM v$sga`,
+	`SELECT COUNT(*) AS noRole FROM SYS.Dba_Roles`,
+	`SELECT COUNT(*) AS noView FROM SYS.User_Views`,
+	`SELECT COUNT(*) AS noTable FROM SYS.User_Tables`,
+	`SELECT COUNT(*) AS noUser FROM All_Users`,
+	`SELECT COUNT(*) AS noOpenedUser FROM SYS.Dba_Users WHERE Account_Status = 'OPEN'`,
+	`SELECT COUNT(*) AS noLockedUser FROM SYS.Dba_Users	WHERE Account_Status LIKE '%LOCKED%'`,
+	`SELECT COUNT(*) AS noAdminUser FROM SYS.Dba_Role_Privs WHERE Granted_Role = 'SYS_ADMIN'`,
+	`SELECT COUNT(*) AS noNewUser FROM SYS.All_Users WHERE To_Char(Created, 'yy') = To_Char(Sysdate, 'yy') AND To_Char(Created, 'mm') = To_Char(Sysdate, 'mm')`,
+];
+
 exports.getStatisticDash = async (req, res, next) => {
 	const oracleConnect = await oracle.connect(
 		res.locals.user,
 		res.locals.password,
 	);
 	try {
-		const sql = `
-			BEGIN
-				Sp_Analysis_Sa_Dash(:totalSga, :noRole, :noView,:noTable, :noUser, :noOpenedUser, :noLockedUser, :noAdminUser, :noNewUser);
-			END;
-		`;
-		const result = await oracleConnect.execute(sql, {
-			totalSga: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noRole: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noView: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noTable: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noUser: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noOpenedUser: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noLockedUser: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noAdminUser: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-			noNewUser: { dir: OracleDB.BIND_OUT, type: OracleDB.NUMBER },
-		});
-		return res.status(200).json({ statisticData: result.outBinds });
+		const result = await Promise.all([
+			await oracleConnect.execute(sqlDashList[0]),
+			await oracleConnect.execute(sqlDashList[1]),
+			await oracleConnect.execute(sqlDashList[2]),
+			await oracleConnect.execute(sqlDashList[3]),
+			await oracleConnect.execute(sqlDashList[4]),
+			await oracleConnect.execute(sqlDashList[5]),
+			await oracleConnect.execute(sqlDashList[6]),
+			await oracleConnect.execute(sqlDashList[7]),
+			await oracleConnect.execute(sqlDashList[8]),
+		]);
+		if (result) {
+			const statisticData = {};
+			result.map((item) => Object.assign(statisticData, item.rows[0]));
+			return res.status(200).json({ statisticData });
+		}
 	} catch (error) {
 		console.error('GET STATISTIC DASH ERROR: ', error);
 		return res.status(400).json({ message: 'failed' });
@@ -81,6 +93,48 @@ exports.getDetailUser = async (req, res, next) => {
 		if (result) return res.status(200).json({ user: result.rows[0] });
 	} catch (error) {
 		console.error('GET DETAIL USER ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.delUser = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { username } = req.query;
+		const sql = `DROP USER ${username} CASCADE`;
+		const result = await oracleConnect.execute(sql);
+		if (result) return res.status(200).json({ message: 'success' });
+	} catch (error) {
+		console.error('DELETE USER ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.putChangePassword = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { newPw, username, isLocked } = req.body;
+		let sql =
+			newPw.trim() !== ''
+				? `ALTER USER ${username} IDENTIFIED BY ${newPw} ACCOUNT ${
+						isLocked ? 'LOCK' : 'UNLOCK'
+				  }`
+				: `ALTER USER ${username} ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'}`;
+
+		const result = await oracleConnect.execute(sql);
+		if (result) return res.status(200).json({ message: 'success' });
+	} catch (error) {
+		console.error('PUT CHANGE PASSWORD ERROR: ', error);
 		return res.status(400).json({ message: 'failed' });
 	} finally {
 		oracleConnect.close();

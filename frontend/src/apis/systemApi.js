@@ -14,6 +14,14 @@ const systemApi = {
   getDetailUser: (userId) => {
     return axiosClient.get(`${URL}/user`, { params: { userId } });
   },
+
+  delUser: (username) => {
+    return axiosClient.delete(`${URL}/user`, { params: { username } });
+  },
+
+  putChangePassword: (username, newPw, isLocked) => {
+    return axiosClient.put(`${URL}/user/pw`, { username, newPw, isLocked });
+  },
 };
 
 export default systemApi;

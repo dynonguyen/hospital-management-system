@@ -55,64 +55,64 @@ function SystemDashboard() {
         const result = await systemApi.getStatisticDash();
         if (result) {
           const {
-            totalSga,
-            noRole,
-            noView,
-            noTable,
-            noUser,
-            noOpenedUser,
-            noLockedUser,
-            noAdminUser,
-            noNewUser,
+            TOTALSGA,
+            NOROLE,
+            NOVIEW,
+            NOTABLE,
+            NOUSER,
+            NOOPENEDUSER,
+            NOLOCKEDUSER,
+            NOADMINUSER,
+            NONEWUSER,
           } = result.data.statisticData;
 
           setTimeout(() => {
             setStatData({
-              totalUser: noUser,
+              totalUser: NOUSER,
               userStatList: [
                 {
                   title: 'Opened User',
-                  count: noOpenedUser,
+                  count: NOOPENEDUSER,
                   color: '#fe9897',
                 },
                 {
                   title: 'Locked User',
-                  count: noLockedUser,
+                  count: NOLOCKEDUSER,
                   color: '#fe9807',
                 },
                 {
                   title: 'Admin Users',
-                  count: noAdminUser,
+                  count: NOADMINUSER,
                   color: '#367d3a',
                 },
                 {
                   title: 'New Users',
-                  count: noNewUser,
+                  count: NONEWUSER,
                   color: '#2297f8',
                 },
               ],
               otherList: [
                 {
                   title: 'Total SGA (MB)',
-                  count: totalSga.toFixed(2),
+                  count: TOTALSGA.toFixed(2),
                   color: '#fe9807',
                   icon: dbIconUrl,
                 },
                 {
                   title: 'Number Of Role',
-                  count: noRole,
+                  count: NOROLE,
                   color: '#fe9897',
                   icon: roleIconUrl,
                 },
                 {
                   title: 'Number Of View',
-                  count: noView,
+                  count: NOVIEW,
                   color: '#367d3a',
                   icon: viewIconUrl,
                 },
                 {
                   title: 'Number Of Table',
-                  count: noTable,
+                  count: NOTABLE,
                   color: '#2297f8',
                   icon: tableIconUrl,
                 },
