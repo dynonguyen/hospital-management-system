@@ -25,7 +25,23 @@ function UserGrantRevoke() {
           name="username"
           labelAlign="left"
           label="User Name"
-          rules={[{ required: true, message: 'Nhập username !' }]}>
+          rules={[
+            { required: true, message: 'Nhập username !' },
+            {
+              validator(_, value) {
+                if (
+                  value.trim() !== '' &&
+                  /^([a-z]|[A-Z])+(_|\d|\w)*$/gi.test(value.trim()) === false
+                )
+                  return Promise.reject(
+                    new Error(
+                      'Tên người dùng không hợp lệ ! Ví dụ tên đúng: User, User01, User_01',
+                    ),
+                  );
+                return Promise.resolve();
+              },
+            },
+          ]}>
           <Input autoFocus maxLength={40} />
         </Form.Item>
 

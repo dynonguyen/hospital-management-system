@@ -99,6 +99,12 @@ exports.getDetailUser = async (req, res, next) => {
 	}
 };
 
+exports.getSystemInitVal = async (req, res, next) => {
+	try {
+		return res.status(200).json({ data: 'mess' });
+	} catch (error) {}
+};
+
 exports.delUser = async (req, res, next) => {
 	const oracleConnect = await oracle.connect(
 		res.locals.user,

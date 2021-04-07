@@ -19,8 +19,13 @@ function App() {
 
   // get user
   useEffect(() => {
-    setIsLoading(false);
-    dispatch(getUser());
+    let isSubscribe = true;
+    (async function getSystemUser() {
+      const res = await dispatch(getUser());
+      if (res && isSubscribe) setIsLoading(false);
+    })();
+
+    return () => (isSubscribe = false);
   }, []);
 
   return (

@@ -5,44 +5,37 @@ import {
   UserAddOutlined,
 } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
+import PropTypes from 'prop-types';
 import React from 'react';
 import './index.scss';
+import CreateRoleGrantRevoke from './Role';
+import RoleGrantRevoke from './RolePrivileges';
+import SystemPrivGrantRevoke from './SystemPrivileges';
+import TablePrivGrantRevoke from './TablePrivileges';
 import UserGrantRevoke from './User';
+
 const { TabPane } = Tabs;
 
-function GrantRevoke() {
+function GrantRevoke({ isUser, isEdit }) {
+  const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'}`;
   return (
     <div className="p-32">
-      <h1 className="sa-grant-title m-b-8">Create User</h1>
+      <h1 className="sa-grant-title m-b-8">{title}</h1>
       <div className="sa-grant">
         <Tabs defaultActiveKey="user" type="card">
+          {/* user */}
           <TabPane
             tab={
               <span>
                 <UserAddOutlined />
-                User
+                {isUser ? 'User' : 'Role'}
               </span>
             }
             key="user">
-            <UserGrantRevoke />
-            <div className="t-right w-100">
-              <Button
-                type="dashed"
-                style={{ width: 200 }}
-                size="large"
-                danger
-                className="m-r-12">
-                Reset
-              </Button>
-              <Button
-                type="primary"
-                style={{ width: 200 }}
-                size="large"
-                className="m-tb-8">
-                Apply
-              </Button>
-            </div>
+            {isUser ? <UserGrantRevoke /> : <CreateRoleGrantRevoke />}
           </TabPane>
+
+          {/* granted roles */}
           <TabPane
             tab={
               <span>
@@ -51,8 +44,10 @@ function GrantRevoke() {
               </span>
             }
             key="role">
-            phân quyền theo vai trò
+            <RoleGrantRevoke />
           </TabPane>
+
+          {/* system privileges */}
           <TabPane
             tab={
               <span>
@@ -61,8 +56,10 @@ function GrantRevoke() {
               </span>
             }
             key="priv">
-            Phân quyền theo quyền hệ thống
+            <SystemPrivGrantRevoke />
           </TabPane>
+
+          {/* table privileges */}
           <TabPane
             tab={
               <span>
@@ -71,12 +68,40 @@ function GrantRevoke() {
               </span>
             }
             key="table">
-            Phân quyền theo bảng
+            <TablePrivGrantRevoke />
           </TabPane>
         </Tabs>
+
+        <div className="t-right w-100">
+          <Button
+            type="dashed"
+            style={{ width: 200 }}
+            size="large"
+            danger
+            className="m-r-12">
+            Reset
+          </Button>
+          <Button
+            type="primary"
+            style={{ width: 200 }}
+            size="large"
+            className="m-tb-8">
+            Apply
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
+
+GrantRevoke.propTypes = {
+  isUser: PropTypes.bool,
+  isEdit: PropTypes.bool,
+};
+
+GrantRevoke.defaultProps = {
+  isUser: true,
+  isEdit: false,
+};
 
 export default GrantRevoke;

@@ -14,13 +14,14 @@ import {
 import { Menu, message, Tooltip } from 'antd';
 import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
-import CreateUser from 'pages/System/CreateUser';
+import CreateUserRole from 'pages/System/CreateUserRole';
 import SystemDashboard from 'pages/System/Dashboard';
 import SystemUserList from 'pages/System/UserList';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setUser } from 'redux/slices/user.slice';
+import EditGrantUserRole from './EditGrantUserRole';
 import './index.scss';
 
 const { SubMenu } = Menu;
@@ -78,7 +79,15 @@ const componentRender = [
   },
   {
     key: 'create-user',
-    component: <CreateUser />,
+    component: <CreateUserRole isUser={true} />,
+  },
+  {
+    key: 'create-role',
+    component: <CreateUserRole isUser={false} />,
+  },
+  {
+    key: 'grant',
+    component: <EditGrantUserRole />,
   },
 ];
 
@@ -189,7 +198,6 @@ function SystemAdmin() {
             className="h-100"
             // defaultSelectedKeys={menuList[0].key}
             defaultSelectedKeys="create-user"
-            defaultOpenKeys="privileges"
             inlineCollapsed={inlineCollapsed}
             mode="inline"
             theme="dark">

@@ -8,7 +8,7 @@ const Login = React.lazy(() => import('pages/Login'));
 const AddStaff = React.lazy(() => import('components/ManageView/AddStaff'));
 const TotalStaff = React.lazy(() => import('components/ManageView/TotalStaff'));
 const LoginPage = React.lazy(() => import('pages/Login'));
-const SystemAdmin = React.lazy(() => import('components/SystemAdmin'));
+const SystemAdminPage = React.lazy(() => import('pages/System'));
 
 // system admin route
 const systemRoutes = [
@@ -16,7 +16,7 @@ const systemRoutes = [
     path: ROUTES.HOME,
     exact: false,
     isProtect: true,
-    component: () => <SystemAdmin />,
+    component: () => <SystemAdminPage />,
   },
 ];
 

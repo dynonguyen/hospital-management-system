@@ -7,6 +7,8 @@ systemApi.get('/user-list', systemController.getUserList);
 
 systemApi.get('/user', systemController.getDetailUser);
 
+systemApi.get('/sys-init', systemController.getSystemInitVal);
+
 systemApi.delete('/user', systemController.delUser);
 
 systemApi.put('/user/pw', systemController.putChangePassword);

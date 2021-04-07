@@ -22,6 +22,10 @@ const systemApi = {
   putChangePassword: (username, newPw, isLocked) => {
     return axiosClient.put(`${URL}/user/pw`, { username, newPw, isLocked });
   },
+
+  getSystemInitVal: () => {
+    return axiosClient.get(`${URL}/sys-init`);
+  },
 };
 
 export default systemApi;
