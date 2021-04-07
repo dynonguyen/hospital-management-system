@@ -1,0 +1,36 @@
+.sa-grant {
+  padding: 8px 16px;
+  background-color: #fff;
+  box-shadow: 0px 0px 4px 4px rgba(#1e1e1e, 0.08);
+
+  &-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #444;
+  }
+
+  &-content {
+    border: solid 1px #f0f0f0;
+    border-top: none;
+    padding: 16px;
+  }
+
+  .ant-tabs-tab {
+    background-color: #e8e8e8 !important;
+    &-active {
+      background-color: #fff !important;
+    }
+  }
+
+  .ant-tabs-nav {
+    margin-bottom: 0 !important;
+  }
+
+  .ant-form-item-label {
+    max-width: 15rem;
+  }
+
+  .ant-form-item-control {
+    max-width: 100% !important;
+  }
+}

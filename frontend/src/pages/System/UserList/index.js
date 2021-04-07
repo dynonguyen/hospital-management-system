@@ -67,7 +67,12 @@ function SystemUserList() {
         message.warn('Không thể thay đổi user SYS !');
         return;
       }
-      const { password, isLocked } = value;
+      const { password, confirmPw, isLocked } = value;
+      if (password !== '' && confirmPw === '') {
+        message.error('Vui lòng xác nhận lại mật khẩu!');
+        return;
+      }
+
       const result = await systemApi.putChangePassword(
         username,
         password,
@@ -204,6 +209,7 @@ function SystemUserList() {
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá ?"
               okText="Xoá"
+              okButtonProps={{ danger: true }}
               cancelText="Huỷ"
               onConfirm={() => deleteUser(record.USERNAME)}>
               <DeleteOutlined className="action-icon delete" />

@@ -26,14 +26,19 @@ function UserEditUser({ username, isLocked, onFinishEdit, onCancel }) {
         initialValues={{ password: '', confirmPw: '', isLocked }}
         {...formItemLayout}
         onFinish={(value) => onFinishEdit(value)}>
+        {/* password */}
         <Form.Item
+          labelAlign="left"
           label="New Password"
           name="password"
           hasFeedback
           rules={[{ min: 4, message: 'Mật khẩu tối thiểu 4 ký tự!' }]}>
           <Input.Password autoFocus maxLength={20} />
         </Form.Item>
+
+        {/* confirm password */}
         <Form.Item
+          labelAlign="left"
           label="Confirm Password"
           name="confirmPw"
           rules={[
@@ -49,7 +54,10 @@ function UserEditUser({ username, isLocked, onFinishEdit, onCancel }) {
           hasFeedback>
           <Input.Password maxLength={20} />
         </Form.Item>
+
+        {/* account is locked */}
         <Form.Item
+          labelAlign="left"
           label="Account is locked"
           name="isLocked"
           valuePropName="checked">

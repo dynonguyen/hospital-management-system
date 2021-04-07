@@ -14,6 +14,7 @@ import {
 import { Menu, message, Tooltip } from 'antd';
 import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
+import CreateUser from 'pages/System/CreateUser';
 import SystemDashboard from 'pages/System/Dashboard';
 import SystemUserList from 'pages/System/UserList';
 import React, { useState } from 'react';
@@ -43,14 +44,6 @@ const menuList = [
     icon: <ApartmentOutlined />,
     isSub: true,
     subMenu: [
-      {
-        key: 'role-priv',
-        title: 'Role Privilege List',
-      },
-      {
-        key: 'user-priv',
-        title: 'User Privilege List',
-      },
       {
         key: 'create-user',
         title: 'Create User',
@@ -83,6 +76,10 @@ const componentRender = [
     key: 'user-list',
     component: <SystemUserList />,
   },
+  {
+    key: 'create-user',
+    component: <CreateUser />,
+  },
 ];
 
 function renderActiveComponent(key = 'dashboard', list = []) {
@@ -92,7 +89,7 @@ function renderActiveComponent(key = 'dashboard', list = []) {
 
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState('dashboard');
+  const [activeKey, setActiveKey] = useState('create-user');
   const { username } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
@@ -190,7 +187,9 @@ function SystemAdmin() {
           className={`system-admin-menu ${inlineCollapsed ? 'collapsed' : ''}`}>
           <Menu
             className="h-100"
-            defaultSelectedKeys={menuList[0].key}
+            // defaultSelectedKeys={menuList[0].key}
+            defaultSelectedKeys="create-user"
+            defaultOpenKeys="privileges"
             inlineCollapsed={inlineCollapsed}
             mode="inline"
             theme="dark">
