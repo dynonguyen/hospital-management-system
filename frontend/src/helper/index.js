@@ -1,8 +1,9 @@
-import { Menu } from 'antd';
+import { Menu, Select } from 'antd';
 import constant from 'constant';
 import React from 'react';
 import { Link } from 'react-router-dom';
 const { SubMenu } = Menu;
+const { Option } = Select;
 
 // fn: Render menu 1 cấp sub menu
 function renderMenu(menu = []) {
@@ -70,9 +71,19 @@ function formateDate(dateInput = new Date()) {
   return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 }
 
+// fn: render option select antd with only value array
+function renderOptions(optionList = []) {
+  return optionList.map((item, key) => (
+    <Option key={key} value={item}>
+      {item}
+    </Option>
+  ));
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
   analystRole,
   formateDate,
+  renderOptions,
 };

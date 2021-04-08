@@ -1,6 +1,6 @@
 const oracle = require('../configs/oracle');
 const OracleDB = require('oracledb');
-
+const systemService = require('../services/system.service');
 // danh sách câu truy vấn cho getStatisticDash
 const sqlDashList = [
 	`SELECT SUM(Value) / 1024 / 1024 AS totalSga FROM v$sga`,
@@ -100,9 +100,32 @@ exports.getDetailUser = async (req, res, next) => {
 };
 
 exports.getSystemInitVal = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
 	try {
-		return res.status(200).json({ data: 'mess' });
-	} catch (error) {}
+		const tableSpaceList = await systemService.getTableSpaceList(oracleConnect);
+		const usernameList = await systemService.getUsernameList(oracleConnect);
+		const roleList = await systemService.getRoleList(oracleConnect);
+		const sysPrivList = await systemService.getSysPrivList(oracleConnect);
+		const userTableList = await systemService.getUserTableList(oracleConnect);
+		const colTableList = await systemService.getColTabList(oracleConnect);
+
+		return res.status(200).json({
+			tableSpaceList,
+			usernameList,
+			roleList,
+			sysPrivList,
+			userTableList,
+			colTableList,
+		});
+	} catch (error) {
+		console.error('GET SYSTEM INIT VALUE ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
 };
 
 exports.delUser = async (req, res, next) => {

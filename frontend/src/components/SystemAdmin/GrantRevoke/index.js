@@ -16,8 +16,10 @@ import UserGrantRevoke from './User';
 
 const { TabPane } = Tabs;
 
-function GrantRevoke({ isUser, isEdit }) {
-  const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'}`;
+function GrantRevoke({ isUser, isEdit, username }) {
+  const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
+    isEdit ? username : ''
+  }`;
   return (
     <div className="p-32">
       <h1 className="sa-grant-title m-b-8">{title}</h1>
@@ -44,7 +46,7 @@ function GrantRevoke({ isUser, isEdit }) {
               </span>
             }
             key="role">
-            <RoleGrantRevoke />
+            <RoleGrantRevoke isEdit={isEdit} />
           </TabPane>
 
           {/* system privileges */}
@@ -97,11 +99,13 @@ function GrantRevoke({ isUser, isEdit }) {
 GrantRevoke.propTypes = {
   isUser: PropTypes.bool,
   isEdit: PropTypes.bool,
+  username: PropTypes.string,
 };
 
 GrantRevoke.defaultProps = {
   isUser: true,
   isEdit: false,
+  username: '',
 };
 
 export default GrantRevoke;

@@ -1,5 +1,7 @@
 import { Checkbox, Form, Input, Select } from 'antd';
+import helper from 'helper';
 import React from 'react';
+import { useSelector } from 'react-redux';
 const { Option } = Select;
 
 const formItemLayout = {
@@ -14,6 +16,9 @@ const formItemLayout = {
 };
 
 function UserGrantRevoke() {
+  const { tableSpaceList, tempTableSpaceList } = useSelector(
+    (state) => state.system,
+  );
   return (
     <div className="sa-grant-content">
       <Form
@@ -90,15 +95,13 @@ function UserGrantRevoke() {
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }>
-            <Option value="sys">SYSTEM</Option>
-            <Option value="temp">TEMP</Option>
-            <Option value="hms">JMS</Option>
+            {helper.renderOptions(tableSpaceList)}
           </Select>
         </Form.Item>
 
         {/* temporary table */}
         <Form.Item
-          name="tenpTable"
+          name="tempTable"
           labelAlign="left"
           label="Temporary Tablespace">
           <Select
@@ -108,9 +111,7 @@ function UserGrantRevoke() {
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }>
-            <Option value="sys">SYSTEM</Option>
-            <Option value="temp">TEMP</Option>
-            <Option value="hms">JMS</Option>
+            {helper.renderOptions(tempTableSpaceList)}
           </Select>
         </Form.Item>
 

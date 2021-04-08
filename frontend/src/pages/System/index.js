@@ -1,12 +1,13 @@
 import { Spin } from 'antd';
 import SystemAdmin from 'components/SystemAdmin';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getSysInitVal } from 'redux/slices/system.slice';
 
 function SystemAdminPage() {
   const [loadingInitVal, setLoadingInitVal] = useState(true);
   const dispatch = useDispatch();
+  const system = useSelector((state) => state.system);
 
   useEffect(() => {
     let isSubscribe = true;

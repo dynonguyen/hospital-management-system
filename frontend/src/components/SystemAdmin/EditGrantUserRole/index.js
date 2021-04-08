@@ -1,8 +1,13 @@
 import { Select } from 'antd';
-import React from 'react';
+import helper from 'helper';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import GrantRevoke from '../GrantRevoke';
 const { Option } = Select;
+
 function EditGrantUserRole() {
+  const { usernameList } = useSelector((state) => state.system);
+  const [usernameSelected, setUsernameSelected] = useState('');
   return (
     <>
       <div className="p-lr-32 p-t-32">
@@ -12,14 +17,16 @@ function EditGrantUserRole() {
           style={{ width: 360 }}
           showSearch
           optionFilterProp="children"
+          onChange={(val) => setUsernameSelected(val)}
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }>
-          <Option value="1">Admin (User)</Option>
-          <Option value="2">Sys_Admin (Role)</Option>
+          {helper.renderOptions(usernameList)}
         </Select>
       </div>
-      <GrantRevoke isEdit={true} />
+      {usernameSelected !== '' && (
+        <GrantRevoke isEdit={true} username={usernameSelected} />
+      )}
     </>
   );
 }

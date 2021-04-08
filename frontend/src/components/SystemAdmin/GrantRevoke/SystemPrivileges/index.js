@@ -1,5 +1,6 @@
 import { Button, Checkbox, Table } from 'antd';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const columns = [
   {
@@ -7,7 +8,7 @@ const columns = [
     dataIndex: 'privilege',
     key: 'privilege',
     sorter: (a, b) =>
-      a.privilege < a.privilege ? -1 : a.privilege > b.privilege ? 1 : 0,
+      a.privilege < b.privilege ? -1 : a.privilege > b.privilege ? 1 : 0,
   },
   {
     title: 'Granted',
@@ -25,22 +26,15 @@ const columns = [
   },
 ];
 
-// fake data
-
-const data = (function fake() {
-  let res = [];
-  for (let i = 0; i < 20; ++i) {
-    res.push({
-      key: i,
-      privilege: `CREATE ${i}`,
-      granted: i % 3 === 0,
-      admin: i % 2 === 0,
-    });
-  }
-  return res;
-})();
-
 function SystemPrivGrantRevoke() {
+  const { sysPrivList } = useSelector((state) => state.system);
+  const data = sysPrivList.map((item, key) => ({
+    key,
+    privilege: item,
+    granted: false,
+    admin: false,
+  }));
+
   return (
     <div className="sa-grant-content">
       {/* control */}

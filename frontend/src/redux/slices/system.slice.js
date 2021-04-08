@@ -5,7 +5,12 @@ export const getSysInitVal = createAsyncThunk(
   'system/getSysInitVal',
   async (params, thunkAPI) => {
     try {
-      await systemApi.getSystemInitVal();
+      const result = await systemApi.getSystemInitVal();
+      if (result) {
+        thunkAPI.dispatch(
+          setInitState({ ...result.data, tempTableSpaceList: ['TEMP'] }),
+        );
+      }
     } catch (error) {}
   },
 );
@@ -13,20 +18,21 @@ export const getSysInitVal = createAsyncThunk(
 const systemSlice = createSlice({
   name: 'system',
   initialState: {
-    defaultTableSpaceList: [],
-    tempTableSpaceList: [],
+    tableSpaceList: [],
+    tempTableSpaceList: ['TEMP'],
     usernameList: [],
-    roleNameList: [],
-    systemPrivList: [],
-    tableNameList: [],
+    roleList: [],
+    sysPrivList: [],
+    userTableList: [],
+    colTableList: [],
   },
   reducers: {
     setInitState(state, action) {
-      state = { ...action.payload };
+      return { ...action.payload };
     },
   },
 });
 
 const { reducer, actions } = systemSlice;
-export const {} = actions;
+export const { setInitState } = actions;
 export default reducer;

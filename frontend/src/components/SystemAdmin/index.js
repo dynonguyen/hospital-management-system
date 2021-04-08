@@ -16,12 +16,12 @@ import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
 import CreateUserRole from 'pages/System/CreateUserRole';
 import SystemDashboard from 'pages/System/Dashboard';
+import EditUserRole from 'pages/System/EditUserRole';
 import SystemUserList from 'pages/System/UserList';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setUser } from 'redux/slices/user.slice';
-import EditGrantUserRole from './EditGrantUserRole';
 import './index.scss';
 
 const { SubMenu } = Menu;
@@ -87,7 +87,7 @@ const componentRender = [
   },
   {
     key: 'grant',
-    component: <EditGrantUserRole />,
+    component: <EditUserRole />,
   },
 ];
 

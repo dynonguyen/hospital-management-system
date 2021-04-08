@@ -1,5 +1,7 @@
 import { Button, Checkbox, Table } from 'antd';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const columns = [
   {
@@ -7,7 +9,7 @@ const columns = [
     dataIndex: 'roleName',
     key: 'roleName',
     sorter: (a, b) =>
-      a.roleName < a.roleName ? -1 : a.roleName > b.roleName ? 1 : 0,
+      a.roleName < b.roleName ? -1 : a.roleName > b.roleName ? 1 : 0,
   },
   {
     title: 'Granted',
@@ -32,23 +34,15 @@ const columns = [
   },
 ];
 
-// fake data
-
-const data = (function fake() {
-  let res = [];
-  for (let i = 0; i < 20; ++i) {
-    res.push({
-      key: i,
-      roleName: `SYS_ADMIN ${i}`,
-      granted: i % 3 === 0,
-      admin: i % 2 === 0,
-      default: i % 4 === 0,
-    });
-  }
-  return res;
-})();
-
-function RoleGrantRevoke() {
+function RoleGrantRevoke({ isEdit }) {
+  const { roleList } = useSelector((state) => state.system);
+  const data = roleList.map((item, key) => ({
+    key: key,
+    roleName: item,
+    granted: false,
+    admin: false,
+    default: false,
+  }));
   return (
     <div className="sa-grant-content">
       {/* control */}
@@ -74,5 +68,13 @@ function RoleGrantRevoke() {
     </div>
   );
 }
+
+RoleGrantRevoke.propTypes = {
+  isEdit: PropTypes.bool,
+};
+
+RoleGrantRevoke.defaultProps = {
+  isEdit: false,
+};
 
 export default RoleGrantRevoke;

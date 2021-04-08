@@ -39,3 +39,7 @@ app.use('/apis/system', jwtAuthentication, systemApi);
 app.listen(PORT, () => {
 	console.log(`Server is listening on port ${PORT}`);
 });
+
+app.get('/', (req, res, next) => {
+	res.send('Hello');
+});
