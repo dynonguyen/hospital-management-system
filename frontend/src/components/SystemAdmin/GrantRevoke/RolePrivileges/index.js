@@ -1,22 +1,43 @@
 import { Button, Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGrantedRoles } from 'redux/slices/sql.slice';
 
 function RoleGrantRevoke({ isEdit, isUser }) {
   const { roleList } = useSelector((state) => state.system);
   const dispatch = useDispatch();
-  const data = roleList.map((item, key) => ({
-    key: key,
-    roleName: item,
-    granted: false,
-    admin: false,
-    default: false,
-  }));
+  const [data, setData] = useState(() =>
+    roleList.map((item, key) => ({
+      key: key,
+      roleName: item,
+      granted: false,
+      admin: false,
+      default: false,
+    })),
+  );
 
-  const onRoleChecked = async (roleName, columnVal) => {
-    dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+  const onRoleChecked = async (roleName, columnVal, key) => {
+    let newData = [...data];
+
+    if (columnVal.key === 'default' && columnVal.value === true) {
+      newData[key].default = true;
+      newData[key].granted = true;
+      dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+      const newColVal = { key: 'granted', value: true };
+      dispatch(setGrantedRoles({ roleName, columnVal: newColVal, isUser }));
+    } else if (columnVal.key === 'granted' && columnVal.value === false) {
+      newData[key].default = false;
+      newData[key].granted = false;
+      dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+      const newColVal = { key: 'default', value: false };
+      dispatch(setGrantedRoles({ roleName, columnVal: newColVal, isUser }));
+    } else {
+      newData[key][columnVal.key] = columnVal.value;
+      dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+    }
+
+    setData(newData);
   };
 
   const columns = [
@@ -33,12 +54,16 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       key: 'granted',
       render: (value, record) => (
         <Checkbox
-          defaultChecked={value}
+          checked={value}
           onChange={(e) =>
-            onRoleChecked(record.roleName, {
-              key: 'granted',
-              value: e.target.checked,
-            })
+            onRoleChecked(
+              record.roleName,
+              {
+                key: 'granted',
+                value: e.target.checked,
+              },
+              record.key,
+            )
           }
         />
       ),
@@ -51,12 +76,16 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       render: (value, record) => (
         <Checkbox
           onChange={(e) =>
-            onRoleChecked(record.roleName, {
-              key: 'admin',
-              value: e.target.checked,
-            })
+            onRoleChecked(
+              record.roleName,
+              {
+                key: 'admin',
+                value: e.target.checked,
+              },
+              record.key,
+            )
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
       sorter: (a, b) => a.admin - b.admin,
@@ -68,12 +97,16 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       render: (value, record) => (
         <Checkbox
           onChange={(e) =>
-            onRoleChecked(record.roleName, {
-              key: 'default',
-              value: e.target.checked,
-            })
+            onRoleChecked(
+              record.roleName,
+              {
+                key: 'default',
+                value: e.target.checked,
+              },
+              record.key,
+            )
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
       sorter: (a, b) => a.default - b.default,

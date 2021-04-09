@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
 import { Checkbox, Form, Input, Select } from 'antd';
 import helper from 'helper';
+import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setCreateUserInfo } from 'redux/slices/sql.slice';
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -14,7 +14,6 @@ const formItemLayout = {
     md: { span: 20 },
   },
 };
-
 const initialForm = {
   username: '',
   password: '',
@@ -24,11 +23,21 @@ const initialForm = {
   defaultTable: '',
   tempTable: '',
 };
+let timeout = null;
 
 function UserGrantRevoke({ onCreateUser }) {
   const { tableSpaceList, tempTableSpaceList } = useSelector(
     (state) => state.system,
   );
+  const dispatch = useDispatch();
+
+  const onInputChange = (key, value) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      dispatch(setCreateUserInfo({ key, value }));
+    }, 500);
+  };
+
   return (
     <div className="sa-grant-content">
       <Form
@@ -58,7 +67,11 @@ function UserGrantRevoke({ onCreateUser }) {
               },
             },
           ]}>
-          <Input autoFocus maxLength={40} />
+          <Input
+            autoFocus
+            maxLength={40}
+            onChange={(e) => onInputChange('username', e.target.value)}
+          />
         </Form.Item>
 
         {/* password */}
@@ -67,6 +80,7 @@ function UserGrantRevoke({ onCreateUser }) {
           labelAlign="left"
           label="New Password"
           hasFeedback
+          onChange={(e) => onInputChange('password', e.target.value)}
           rules={[
             { required: true, message: 'Nhập password !' },
             { min: 4, message: 'Mật khẩu tối thiểu 4 ký tự!' },
@@ -103,6 +117,7 @@ function UserGrantRevoke({ onCreateUser }) {
             showSearch
             placeholder="Select a default tablespace"
             optionFilterProp="children"
+            onChange={(value) => onInputChange('defaultTableSpace', value)}
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }>
@@ -119,6 +134,7 @@ function UserGrantRevoke({ onCreateUser }) {
             showSearch
             placeholder="Select a temporary tablespace"
             optionFilterProp="children"
+            onChange={(value) => onInputChange('tempTableSpace', value)}
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }>
@@ -131,6 +147,7 @@ function UserGrantRevoke({ onCreateUser }) {
           labelAlign="left"
           label="Account is Locked"
           name="isLocked"
+          onChange={(e) => onInputChange('isLocked', e.target.checked)}
           valuePropName="checked">
           <Checkbox defaultChecked={false} />
         </Form.Item>
@@ -141,6 +158,7 @@ function UserGrantRevoke({ onCreateUser }) {
           labelAlign="left"
           label="Edition Enabled"
           name="isEdition"
+          onChange={(e) => onInputChange('isEdition', e.target.checked)}
           valuePropName="checked">
           <Checkbox defaultChecked={false} />
         </Form.Item>

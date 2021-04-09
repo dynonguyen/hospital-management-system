@@ -10,6 +10,7 @@ import React from 'react';
 import './index.scss';
 import CreateRoleGrantRevoke from './Role';
 import RoleGrantRevoke from './RolePrivileges';
+import SQLTab from './SQLTab';
 import SystemPrivGrantRevoke from './SystemPrivileges';
 import TablePrivGrantRevoke from './TablePrivileges';
 import UserGrantRevoke from './User';
@@ -63,7 +64,7 @@ function GrantRevoke(props) {
               </span>
             }
             key="priv">
-            <SystemPrivGrantRevoke />
+            <SystemPrivGrantRevoke isUser={isUser} />
           </TabPane>
 
           {/* table privileges */}
@@ -76,6 +77,18 @@ function GrantRevoke(props) {
             }
             key="table">
             <TablePrivGrantRevoke />
+          </TabPane>
+
+          {/* sql */}
+          <TabPane
+            tab={
+              <span>
+                <TableOutlined />
+                SQL
+              </span>
+            }
+            key="sql">
+            <SQLTab />
           </TabPane>
         </Tabs>
 

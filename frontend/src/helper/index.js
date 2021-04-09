@@ -80,10 +80,77 @@ function renderOptions(optionList = []) {
   ));
 }
 
+// fn : chuyển đổi mảng granted role thành sql query
+function convertRoleSql(roles = [], username = '') {
+  let sqlList = [],
+    sqlDefaultGrant = '';
+  roles.forEach((item, index) => {
+    const { roleName, granted, admin, default: isDefault } = item;
+    if (granted) {
+      sqlList.push(
+        `GRANT "${roleName}" TO "${username}"${
+          admin ? ' WITH ADMIN OPTION' : ''
+        }`,
+      );
+    }
+    if (isDefault) {
+      if (sqlDefaultGrant === '')
+        sqlDefaultGrant = `ALTER USER "${username}" DEFAULT ROLE "${roleName}"`;
+      else sqlDefaultGrant += `,"${roleName}"`;
+    }
+  });
+  if (sqlDefaultGrant !== '') sqlList.push(sqlDefaultGrant);
+
+  return sqlList;
+}
+
+// fn : chuyển đổi mảng granted role thành sql query
+function convertPrivSql(privs = [], username = '') {
+  let sqlList = [];
+  privs.forEach((item, index) => {
+    const { privilege, granted, admin } = item;
+    if (granted) {
+      sqlList.push(
+        `GRANT ${privilege} TO "${username}"${
+          admin ? ' WITH ADMIN OPTION' : ''
+        }`,
+      );
+    }
+  });
+
+  return sqlList;
+}
+
+// fn: chuyển đổi created user info
+function convertCreateUserInfo(userInfo) {
+  const {
+    username,
+    password,
+    defaultTableSpace,
+    tempTableSpace,
+    isLocked,
+    isEdition,
+  } = userInfo;
+  return `CREATE USER "${username}" IDENTIFIED BY "${
+    password !== '' ? password : 'null'
+  }"
+     ${
+       defaultTableSpace !== ''
+         ? `DEFAULT TABLESPACE "${defaultTableSpace}"`
+         : ''
+     }
+     ${tempTableSpace !== '' ? `TEMPORARY TABLESPACE "${tempTableSpace}"` : ''}
+     ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'}
+     ${isEdition ? 'ENABLE EDITIONS;' : ';'}`;
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
   analystRole,
   formateDate,
   renderOptions,
+  convertRoleSql,
+  convertPrivSql,
+  convertCreateUserInfo,
 };
