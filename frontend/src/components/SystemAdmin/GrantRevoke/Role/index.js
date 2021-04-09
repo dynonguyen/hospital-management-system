@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import { Input } from 'antd';
 import React, { useState } from 'react';
 
-function CreateRoleGrantRevoke() {
+function CreateRoleGrantRevoke({ onCreateRole }) {
   const [inputError, setInputError] = useState('');
 
   const checkInput = (e) => {
@@ -30,5 +31,13 @@ function CreateRoleGrantRevoke() {
     </div>
   );
 }
+
+CreateRoleGrantRevoke.propTypes = {
+  onCreateRole: PropTypes.func,
+};
+
+CreateRoleGrantRevoke.defaultProps = {
+  onCreateRole: () => {},
+};
 
 export default CreateRoleGrantRevoke;

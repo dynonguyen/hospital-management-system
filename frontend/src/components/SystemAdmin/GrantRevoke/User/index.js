@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import { Checkbox, Form, Input, Select } from 'antd';
 import helper from 'helper';
 import React from 'react';
 import { useSelector } from 'react-redux';
-const { Option } = Select;
 
 const formItemLayout = {
   labelCol: {
@@ -15,7 +15,17 @@ const formItemLayout = {
   },
 };
 
-function UserGrantRevoke() {
+const initialForm = {
+  username: '',
+  password: '',
+  confirmPw: '',
+  isLocked: false,
+  isEdition: false,
+  defaultTable: '',
+  tempTable: '',
+};
+
+function UserGrantRevoke({ onCreateUser }) {
   const { tableSpaceList, tempTableSpaceList } = useSelector(
     (state) => state.system,
   );
@@ -24,7 +34,8 @@ function UserGrantRevoke() {
       <Form
         {...formItemLayout}
         name="grant-form"
-        onFinish={(value) => console.log(value)}>
+        initialValues={initialForm}
+        onFinish={(v) => onCreateUser(v)}>
         {/* username */}
         <Form.Item
           name="username"
@@ -35,8 +46,8 @@ function UserGrantRevoke() {
             {
               validator(_, value) {
                 if (
-                  value.trim() !== '' &&
-                  /^([a-z]|[A-Z])+(_|\d|\w)*$/gi.test(value.trim()) === false
+                  value !== '' &&
+                  /^([a-z]|[A-Z])+(_|\d|\w)*$/gi.test(value) === false
                 )
                   return Promise.reject(
                     new Error(
@@ -129,7 +140,7 @@ function UserGrantRevoke() {
           className="m-0"
           labelAlign="left"
           label="Edition Enabled"
-          name="edition"
+          name="isEdition"
           valuePropName="checked">
           <Checkbox defaultChecked={false} />
         </Form.Item>
@@ -137,5 +148,13 @@ function UserGrantRevoke() {
     </div>
   );
 }
+
+UserGrantRevoke.propTypes = {
+  onCreateUser: PropTypes.func,
+};
+
+UserGrantRevoke.defaultProps = {
+  onCreateUser: () => {},
+};
 
 export default UserGrantRevoke;

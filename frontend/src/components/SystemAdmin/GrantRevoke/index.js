@@ -16,7 +16,8 @@ import UserGrantRevoke from './User';
 
 const { TabPane } = Tabs;
 
-function GrantRevoke({ isUser, isEdit, username }) {
+function GrantRevoke(props) {
+  const { isUser, isEdit, username, onCreateUser, onCreateRole } = props;
   const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
     isEdit ? username : ''
   }`;
@@ -34,7 +35,11 @@ function GrantRevoke({ isUser, isEdit, username }) {
               </span>
             }
             key="user">
-            {isUser ? <UserGrantRevoke /> : <CreateRoleGrantRevoke />}
+            {isUser ? (
+              <UserGrantRevoke onCreateUser={onCreateUser} />
+            ) : (
+              <CreateRoleGrantRevoke onCreateRole={onCreateRole} />
+            )}
           </TabPane>
 
           {/* granted roles */}
@@ -46,7 +51,7 @@ function GrantRevoke({ isUser, isEdit, username }) {
               </span>
             }
             key="role">
-            <RoleGrantRevoke isEdit={isEdit} />
+            <RoleGrantRevoke isEdit={isEdit} isUser={isUser} />
           </TabPane>
 
           {/* system privileges */}
@@ -87,8 +92,10 @@ function GrantRevoke({ isUser, isEdit, username }) {
             type="primary"
             style={{ width: 200 }}
             size="large"
+            htmlType="submit"
+            form="grant-form"
             className="m-tb-8">
-            Apply
+            {isEdit ? 'Apply' : 'Create'}
           </Button>
         </div>
       </div>
@@ -100,12 +107,16 @@ GrantRevoke.propTypes = {
   isUser: PropTypes.bool,
   isEdit: PropTypes.bool,
   username: PropTypes.string,
+  onCreateUser: PropTypes.func,
+  onCreateRole: PropTypes.func,
 };
 
 GrantRevoke.defaultProps = {
   isUser: true,
   isEdit: false,
   username: '',
+  onCreateUser: () => {},
+  onCreateRole: () => {},
 };
 
 export default GrantRevoke;

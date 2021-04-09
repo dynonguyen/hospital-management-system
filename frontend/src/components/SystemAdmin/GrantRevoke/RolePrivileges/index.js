@@ -1,41 +1,12 @@
 import { Button, Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGrantedRoles } from 'redux/slices/sql.slice';
 
-const columns = [
-  {
-    title: 'Role Name',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    sorter: (a, b) =>
-      a.roleName < b.roleName ? -1 : a.roleName > b.roleName ? 1 : 0,
-  },
-  {
-    title: 'Granted',
-    dataIndex: 'granted',
-    key: 'granted',
-    render: (value) => <Checkbox defaultChecked={value} />,
-    sorter: (a, b) => a.granted - b.granted,
-  },
-  {
-    title: 'Admin',
-    dataIndex: 'admin',
-    key: 'admin',
-    render: (value) => <Checkbox defaultChecked={value} />,
-    sorter: (a, b) => a.admin - b.admin,
-  },
-  {
-    title: 'Default',
-    dataIndex: 'default',
-    key: 'default',
-    render: (value) => <Checkbox defaultChecked={value} />,
-    sorter: (a, b) => a.default - b.default,
-  },
-];
-
-function RoleGrantRevoke({ isEdit }) {
+function RoleGrantRevoke({ isEdit, isUser }) {
   const { roleList } = useSelector((state) => state.system);
+  const dispatch = useDispatch();
   const data = roleList.map((item, key) => ({
     key: key,
     roleName: item,
@@ -43,6 +14,72 @@ function RoleGrantRevoke({ isEdit }) {
     admin: false,
     default: false,
   }));
+
+  const onRoleChecked = async (roleName, columnVal) => {
+    dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+  };
+
+  const columns = [
+    {
+      title: 'Role Name',
+      dataIndex: 'roleName',
+      key: 'roleName',
+      sorter: (a, b) =>
+        a.roleName < b.roleName ? -1 : a.roleName > b.roleName ? 1 : 0,
+    },
+    {
+      title: 'Granted',
+      dataIndex: 'granted',
+      key: 'granted',
+      render: (value, record) => (
+        <Checkbox
+          defaultChecked={value}
+          onChange={(e) =>
+            onRoleChecked(record.roleName, {
+              key: 'granted',
+              value: e.target.checked,
+            })
+          }
+        />
+      ),
+      sorter: (a, b) => a.granted - b.granted,
+    },
+    {
+      title: 'Admin',
+      dataIndex: 'admin',
+      key: 'admin',
+      render: (value, record) => (
+        <Checkbox
+          onChange={(e) =>
+            onRoleChecked(record.roleName, {
+              key: 'admin',
+              value: e.target.checked,
+            })
+          }
+          defaultChecked={value}
+        />
+      ),
+      sorter: (a, b) => a.admin - b.admin,
+    },
+    {
+      title: 'Default',
+      dataIndex: 'default',
+      key: 'default',
+      render: (value, record) => (
+        <Checkbox
+          onChange={(e) =>
+            onRoleChecked(record.roleName, {
+              key: 'default',
+              value: e.target.checked,
+            })
+          }
+          defaultChecked={value}
+        />
+      ),
+      sorter: (a, b) => a.default - b.default,
+    },
+  ];
+
   return (
     <div className="sa-grant-content">
       {/* control */}
@@ -71,10 +108,12 @@ function RoleGrantRevoke({ isEdit }) {
 
 RoleGrantRevoke.propTypes = {
   isEdit: PropTypes.bool,
+  isUser: PropTypes.bool,
 };
 
 RoleGrantRevoke.defaultProps = {
   isEdit: false,
+  isUser: true,
 };
 
 export default RoleGrantRevoke;

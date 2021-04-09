@@ -14,7 +14,8 @@ import {
 import { Menu, message, Tooltip } from 'antd';
 import loginApi from 'apis/loginApi';
 import logoUrl from 'assets/images/logo.png';
-import CreateUserRole from 'pages/System/CreateUserRole';
+import CreateRole from 'pages/System/CreateRole';
+import CreateUser from 'pages/System/CreateUser';
 import SystemDashboard from 'pages/System/Dashboard';
 import EditUserRole from 'pages/System/EditUserRole';
 import SystemUserList from 'pages/System/UserList';
@@ -79,11 +80,11 @@ const componentRender = [
   },
   {
     key: 'create-user',
-    component: <CreateUserRole isUser={true} />,
+    component: <CreateUser />,
   },
   {
     key: 'create-role',
-    component: <CreateUserRole isUser={false} />,
+    component: <CreateRole />,
   },
   {
     key: 'grant',
