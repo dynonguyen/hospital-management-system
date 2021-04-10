@@ -26,9 +26,16 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
       const newColVal = { key: 'granted', value: true };
       dispatch(setGrantedRoles({ roleName, columnVal: newColVal, isUser }));
+    } else if (columnVal.key === 'admin' && columnVal.value === true) {
+      newData[key].admin = true;
+      newData[key].granted = true;
+      dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
+      const newColVal = { key: 'granted', value: true };
+      dispatch(setGrantedRoles({ roleName, columnVal: newColVal, isUser }));
     } else if (columnVal.key === 'granted' && columnVal.value === false) {
       newData[key].default = false;
       newData[key].granted = false;
+      newData[key].admin = false;
       dispatch(setGrantedRoles({ roleName, columnVal, isUser }));
       const newColVal = { key: 'default', value: false };
       dispatch(setGrantedRoles({ roleName, columnVal: newColVal, isUser }));
@@ -40,7 +47,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
     setData(newData);
   };
 
-  const columns = [
+  let columns = [
     {
       title: 'Role Name',
       dataIndex: 'roleName',
@@ -90,7 +97,9 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       ),
       sorter: (a, b) => a.admin - b.admin,
     },
-    {
+  ];
+  if (isUser)
+    columns.push({
       title: 'Default',
       dataIndex: 'default',
       key: 'default',
@@ -110,8 +119,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
         />
       ),
       sorter: (a, b) => a.default - b.default,
-    },
-  ];
+    });
 
   return (
     <div className="sa-grant-content">

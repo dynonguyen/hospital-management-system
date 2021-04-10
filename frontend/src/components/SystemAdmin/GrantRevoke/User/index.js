@@ -14,22 +14,23 @@ const formItemLayout = {
     md: { span: 20 },
   },
 };
-const initialForm = {
-  username: '',
-  password: '',
-  confirmPw: '',
-  isLocked: false,
-  isEdition: false,
-  defaultTableSpace: '',
-  tempTableSpace: '',
-};
+
 let timeout = null;
 
-function UserGrantRevoke({ onCreateUser }) {
+function UserGrantRevoke({ onCreateUser, isEdit, name }) {
   const { tableSpaceList, tempTableSpaceList } = useSelector(
     (state) => state.system,
   );
   const dispatch = useDispatch();
+  const initialForm = {
+    username: isEdit ? name : '',
+    password: '',
+    confirmPw: '',
+    isLocked: false,
+    isEdition: false,
+    defaultTableSpace: '',
+    tempTableSpace: '',
+  };
 
   const onInputChange = (key, value) => {
     if (timeout) clearTimeout(timeout);
@@ -69,6 +70,8 @@ function UserGrantRevoke({ onCreateUser }) {
           ]}>
           <Input
             autoFocus
+            disabled={isEdit ? true : false}
+            placeholder={isEdit ? name : ''}
             maxLength={40}
             onChange={(e) => onInputChange('username', e.target.value)}
           />
@@ -169,10 +172,14 @@ function UserGrantRevoke({ onCreateUser }) {
 
 UserGrantRevoke.propTypes = {
   onCreateUser: PropTypes.func,
+  isEdit: PropTypes.bool,
+  name: PropTypes.string,
 };
 
 UserGrantRevoke.defaultProps = {
   onCreateUser: () => {},
+  isEdit: false,
+  name: '',
 };
 
 export default UserGrantRevoke;

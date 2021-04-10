@@ -1,20 +1,28 @@
-import PropTypes from 'prop-types';
 import { Input } from 'antd';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setCreateRoleName } from 'redux/slices/sql.slice';
 
-function CreateRoleGrantRevoke({ onCreateRole }) {
+let timeout = null;
+
+function CreateRoleGrantRevoke() {
   const [inputError, setInputError] = useState('');
-
+  const dispatch = useDispatch();
   const checkInput = (e) => {
-    const { value } = e.target;
-    const regex = /^([a-z]|[A-Z])+(_|\d|\w)*$/gi;
-    if (regex.test(value.trim())) {
-      setInputError('');
-    } else {
-      setInputError(
-        'Tên Role không hợp lệ ! Ví dụ tên đúng: Role, Role01, Role_01',
-      );
-    }
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const { value } = e.target;
+      const regex = /^([a-z]|[A-Z])+(_|\d|\w)*$/gi;
+      if (regex.test(value.trim())) {
+        setInputError('');
+        dispatch(setCreateRoleName(value));
+      } else {
+        setInputError(
+          'Tên Role không hợp lệ ! Ví dụ tên đúng: Role, Role01, Role_01',
+        );
+        dispatch(setCreateRoleName(''));
+      }
+    }, 300);
   };
 
   return (
@@ -31,13 +39,5 @@ function CreateRoleGrantRevoke({ onCreateRole }) {
     </div>
   );
 }
-
-CreateRoleGrantRevoke.propTypes = {
-  onCreateRole: PropTypes.func,
-};
-
-CreateRoleGrantRevoke.defaultProps = {
-  onCreateRole: () => {},
-};
 
 export default CreateRoleGrantRevoke;

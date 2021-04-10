@@ -17,7 +17,7 @@ import logoUrl from 'assets/images/logo.png';
 import CreateRole from 'pages/System/CreateRole';
 import CreateUser from 'pages/System/CreateUser';
 import SystemDashboard from 'pages/System/Dashboard';
-import EditUserRole from 'pages/System/EditUserRole';
+import EditGrantUserRole from 'pages/System/EditUserRole';
 import SystemUserList from 'pages/System/UserList';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -88,7 +88,7 @@ const componentRender = [
   },
   {
     key: 'grant',
-    component: <EditUserRole />,
+    component: <EditGrantUserRole />,
   },
 ];
 
@@ -99,7 +99,7 @@ function renderActiveComponent(key = 'dashboard', list = []) {
 
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState('create-user');
+  const [activeKey, setActiveKey] = useState('grant');
   const { username } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
@@ -199,7 +199,7 @@ function SystemAdmin() {
           <Menu
             className="h-100"
             // defaultSelectedKeys={menuList[0].key}
-            defaultSelectedKeys="create-user"
+            defaultSelectedKeys="grant"
             inlineCollapsed={inlineCollapsed}
             mode="inline"
             theme="dark">

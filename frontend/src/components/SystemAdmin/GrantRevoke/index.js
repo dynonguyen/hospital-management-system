@@ -14,7 +14,6 @@ import SQLTab from './SQLTab';
 import SystemPrivGrantRevoke from './SystemPrivileges';
 import TablePrivGrantRevoke from './TablePrivileges';
 import UserGrantRevoke from './User';
-
 const { TabPane } = Tabs;
 
 function GrantRevoke(props) {
@@ -22,6 +21,13 @@ function GrantRevoke(props) {
   const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
     isEdit ? username : ''
   }`;
+
+  const btnProps = isUser
+    ? { htmlType: 'submit', form: 'grant-form' }
+    : {
+        onClick: onCreateRole,
+      };
+
   return (
     <div className="p-32">
       <h1 className="sa-grant-title m-b-8">{title}</h1>
@@ -37,7 +43,11 @@ function GrantRevoke(props) {
             }
             key="user">
             {isUser ? (
-              <UserGrantRevoke onCreateUser={onCreateUser} />
+              <UserGrantRevoke
+                onCreateUser={onCreateUser}
+                isEdit={isEdit}
+                name={username}
+              />
             ) : (
               <CreateRoleGrantRevoke onCreateRole={onCreateRole} />
             )}
@@ -88,7 +98,7 @@ function GrantRevoke(props) {
               </span>
             }
             key="sql">
-            <SQLTab />
+            <SQLTab isUser={isUser} />
           </TabPane>
         </Tabs>
 
@@ -105,8 +115,7 @@ function GrantRevoke(props) {
             type="primary"
             style={{ width: 200 }}
             size="large"
-            htmlType="submit"
-            form="grant-form"
+            {...btnProps}
             className="m-tb-8">
             {isEdit ? 'Apply' : 'Create'}
           </Button>

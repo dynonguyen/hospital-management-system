@@ -15,6 +15,7 @@ const sqlSlice = createSlice({
     createRoleRoles: [],
     createUserPrivs: [],
     createRolePrivs: [],
+    createRoleName: '',
   },
   reducers: {
     setGrantedRoles(state, action) {
@@ -74,6 +75,9 @@ const sqlSlice = createSlice({
       const { key, value } = action.payload;
       state.createUserInfo[key] = value;
     },
+    setCreateRoleName(state, action) {
+      state.createRoleName = action.payload;
+    },
   },
 });
 
@@ -83,5 +87,6 @@ export const {
   resetGrantedRoles,
   setGrantedPrivs,
   setCreateUserInfo,
+  setCreateRoleName,
 } = actions;
 export default reducer;

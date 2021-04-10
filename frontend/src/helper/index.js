@@ -72,23 +72,23 @@ function formateDate(dateInput = new Date()) {
 }
 
 // fn: render option select antd with only value array
-function renderOptions(optionList = []) {
+function renderOptions(optionList = [], isRole = false) {
   return optionList.map((item, key) => (
-    <Option key={key} value={item}>
-      {item}
+    <Option key={`${item}${key}`} value={isRole ? `${item} (ROLE)` : item}>
+      {isRole ? `${item} (ROLE)` : item}
     </Option>
   ));
 }
 
 // fn : chuyển đổi mảng granted role thành sql query
-function convertRoleSql(roles = [], username = '', type = 0) {
+function convertRoleSql(roles = [], username = '', type = 0, isRole = false) {
   let sqlList = [],
     sqlDefaultGrant = '';
   roles.forEach((item, index) => {
     const { roleName, granted, admin, default: isDefault } = item;
     if (granted) {
       sqlList.push(
-        `GRANT "${roleName}" TO "${username}"${
+        `GRANT "${roleName}" TO ${isRole ? username : `"${username}"`}${
           admin ? ' WITH ADMIN OPTION' : ''
         }`,
       );
@@ -113,13 +113,13 @@ function convertRoleSql(roles = [], username = '', type = 0) {
 }
 
 // fn : chuyển đổi mảng granted role thành sql query
-function convertPrivSql(privs = [], username = '') {
+function convertPrivSql(privs = [], username = '', isRole = false) {
   let sqlList = [];
   privs.forEach((item, index) => {
     const { privilege, granted, admin } = item;
     if (granted) {
       sqlList.push(
-        `GRANT ${privilege} TO "${username}"${
+        `GRANT ${privilege} TO ${isRole ? username : `"${username}"`}${
           admin ? ' WITH ADMIN OPTION' : ''
         }`,
       );

@@ -176,7 +176,6 @@ exports.postCreateUser = async (req, res, next) => {
 	);
 	try {
 		const { createSql, sqlList, defaultRole } = req.body;
-		console.log(defaultRole);
 		const createRes = await oracleConnect.execute(createSql);
 		if (createRes) {
 			const grantRes = await Promise.all(
@@ -193,7 +192,6 @@ exports.postCreateUser = async (req, res, next) => {
 	} catch (error) {
 		console.error('POST CREATE USER ERROR: ', error);
 		if (error.errorNum === 1920) {
-			console.log('object');
 			return res.status(409).json({
 				message:
 					'Đã tồn tại username hoặc role trùng tên. Hãy đổi username khác!',
@@ -202,5 +200,97 @@ exports.postCreateUser = async (req, res, next) => {
 		return res
 			.status(400)
 			.json({ message: 'Tạo user không thành công ! Thử lại.' });
+	} finally {
+		oracleConnect.close();
 	}
+};
+
+exports.postCreateRole = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { createSql, sqlList } = req.body;
+		const createRes = await oracleConnect.execute(createSql);
+		if (createRes) {
+			const grantRes = await Promise.all(
+				sqlList.map(async (sql, index) => {
+					await oracleConnect.execute(sql);
+				}),
+			);
+
+			if (grantRes) {
+				return res.status(200).json({ message: 'success' });
+			}
+		}
+	} catch (error) {
+		console.error('POST CREATE ROLE ERROR: ', error);
+		if (error.errorNum === 1921) {
+			return res.status(409).json({
+				message:
+					'Đã tồn tại username hoặc role trùng tên. Hãy đổi username khác!',
+			});
+		}
+		return res
+			.status(400)
+			.json({ message: 'Tạo user không thành công ! Thử lại.' });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.getUserRolePriv = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { name } = req.query;
+
+		const result = await Promise.all([
+			{
+				role: await oracleConnect.execute(
+					`SELECT * FROM SYS.Dba_Role_Privs WHERE Grantee='${name}'`,
+				),
+			},
+			{
+				priv: await oracleConnect.execute(
+					`SELECT * FROM Dba_Sys_Privs WHERE Grantee = '${name}'`,
+				),
+			},
+		]);
+		if (result) {
+			const roles = result[0].role.rows,
+				privs = result[1].priv.rows;
+			const grantedRole = roles.map((item) => {
+				return {
+					roleName: item.GRANTED_ROLE,
+					admin: item.ADMIN_OPTION === 'NO' ? false : true,
+					default: item.DEFAULT_ROLE === 'NO' ? false : true,
+				};
+			});
+
+			const grantedPriv = privs.map((item) => {
+				return {
+					privilege: item.PRIVILEGE,
+					admin: item.ADMIN_OPTION === 'NO' ? false : true,
+				};
+			});
+
+			return res.status(200).json({ grantedRole, grantedPriv });
+		}
+	} catch (error) {
+		console.log('GET USER ROLE PRIV ERROR: ', error);
+		return res.status(400).json({ message: 'failed' });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.gerBriefUserInfo = async (req, res, next) => {
+	try {
+		const { username } = req.query;
+		console.log(username);
+	} catch (error) {}
 };

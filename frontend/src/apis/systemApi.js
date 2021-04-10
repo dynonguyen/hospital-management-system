@@ -34,6 +34,20 @@ const systemApi = {
       defaultRole,
     });
   },
+
+  postCreateRole: (createSql, sqlList) => {
+    return axiosClient.post(`${URL}/create-role`, { createSql, sqlList });
+  },
+
+  getUserRolePriv: (name) => {
+    return axiosClient.get(`${URL}/user-role-priv`, {
+      params: { name },
+    });
+  },
+
+  getBriefUserInfo: (username) => {
+    return axiosClient.get(`${URL}/brief-user`, { params: { username } });
+  },
 };
 
 export default systemApi;
