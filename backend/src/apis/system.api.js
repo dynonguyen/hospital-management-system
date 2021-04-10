@@ -13,4 +13,6 @@ systemApi.delete('/user', systemController.delUser);
 
 systemApi.put('/user/pw', systemController.putChangePassword);
 
+systemApi.post('/create-user', systemController.postCreateUser);
+
 module.exports = systemApi;

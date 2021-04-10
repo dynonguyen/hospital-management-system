@@ -20,8 +20,8 @@ const initialForm = {
   confirmPw: '',
   isLocked: false,
   isEdition: false,
-  defaultTable: '',
-  tempTable: '',
+  defaultTableSpace: '',
+  tempTableSpace: '',
 };
 let timeout = null;
 
@@ -110,7 +110,7 @@ function UserGrantRevoke({ onCreateUser }) {
 
         {/* default table */}
         <Form.Item
-          name="defaultTable"
+          name="defaultTableSpace"
           labelAlign="left"
           label="Default Tablespace">
           <Select
@@ -127,7 +127,7 @@ function UserGrantRevoke({ onCreateUser }) {
 
         {/* temporary table */}
         <Form.Item
-          name="tempTable"
+          name="tempTableSpace"
           labelAlign="left"
           label="Temporary Tablespace">
           <Select

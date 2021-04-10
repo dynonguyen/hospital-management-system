@@ -81,7 +81,7 @@ function renderOptions(optionList = []) {
 }
 
 // fn : chuyển đổi mảng granted role thành sql query
-function convertRoleSql(roles = [], username = '') {
+function convertRoleSql(roles = [], username = '', type = 0) {
   let sqlList = [],
     sqlDefaultGrant = '';
   roles.forEach((item, index) => {
@@ -99,9 +99,17 @@ function convertRoleSql(roles = [], username = '') {
       else sqlDefaultGrant += `,"${roleName}"`;
     }
   });
-  if (sqlDefaultGrant !== '') sqlList.push(sqlDefaultGrant);
-
-  return sqlList;
+  if (sqlDefaultGrant !== '') {
+    if (type === 0) {
+      sqlList.push(sqlDefaultGrant);
+      return sqlList;
+    } else {
+      return { sqlList, defaultRole: sqlDefaultGrant };
+    }
+  } else {
+    if (type === 0) return sqlList;
+    return { sqlList, defaultRole: '' };
+  }
 }
 
 // fn : chuyển đổi mảng granted role thành sql query
@@ -133,15 +141,13 @@ function convertCreateUserInfo(userInfo) {
   } = userInfo;
   return `CREATE USER "${username}" IDENTIFIED BY "${
     password !== '' ? password : 'null'
-  }"
-     ${
-       defaultTableSpace !== ''
-         ? `DEFAULT TABLESPACE "${defaultTableSpace}"`
-         : ''
-     }
-     ${tempTableSpace !== '' ? `TEMPORARY TABLESPACE "${tempTableSpace}"` : ''}
-     ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'}
-     ${isEdition ? 'ENABLE EDITIONS;' : ';'}`;
+  }" ${
+    defaultTableSpace !== '' ? `DEFAULT TABLESPACE "${defaultTableSpace}"` : ''
+  } ${
+    tempTableSpace !== '' ? `TEMPORARY TABLESPACE "${tempTableSpace}"` : ''
+  } ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'} ${
+    isEdition ? 'ENABLE EDITIONS' : ''
+  }`;
 }
 
 export default {

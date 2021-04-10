@@ -26,6 +26,14 @@ const systemApi = {
   getSystemInitVal: () => {
     return axiosClient.get(`${URL}/sys-init`);
   },
+
+  postCreateUser: (createSql, sqlList, defaultRole) => {
+    return axiosClient.post(`${URL}/create-user`, {
+      createSql,
+      sqlList,
+      defaultRole,
+    });
+  },
 };
 
 export default systemApi;

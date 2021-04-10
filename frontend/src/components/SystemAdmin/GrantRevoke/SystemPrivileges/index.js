@@ -1,20 +1,41 @@
-import PropTypes from 'prop-types';
 import { Button, Checkbox, Table } from 'antd';
-import React from 'react';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGrantedPrivs } from 'redux/slices/sql.slice';
 
 function SystemPrivGrantRevoke({ isUser }) {
   const { sysPrivList } = useSelector((state) => state.system);
   const dispatch = useDispatch();
-  const data = sysPrivList.map((item, key) => ({
-    key,
-    privilege: item,
-    granted: false,
-    admin: false,
-  }));
-  const onPrivChecked = async (privilege, columnVal) => {
-    dispatch(setGrantedPrivs({ privilege, columnVal, isUser }));
+  const [data, setData] = useState(() =>
+    sysPrivList.map((item, key) => ({
+      key,
+      privilege: item,
+      granted: false,
+      admin: false,
+    })),
+  );
+
+  const onPrivChecked = async (privilege, columnVal, key) => {
+    let newData = [...data];
+    if (columnVal.key === 'admin' && columnVal.value === true) {
+      newData[key].granted = true;
+      newData[key].admin = true;
+      dispatch(setGrantedPrivs({ privilege, columnVal, isUser }));
+      const newColVal = { key: 'granted', value: true };
+      dispatch(setGrantedPrivs({ privilege, columnVal: newColVal, isUser }));
+    } else if (columnVal.key === 'granted' && columnVal.value === false) {
+      newData[key].granted = false;
+      newData[key].admin = false;
+      dispatch(setGrantedPrivs({ privilege, columnVal, isUser }));
+      const newColVal = { key: 'admin', value: false };
+      dispatch(setGrantedPrivs({ privilege, columnVal: newColVal, isUser }));
+    } else {
+      newData[key][columnVal.key] = columnVal.value;
+      dispatch(setGrantedPrivs({ privilege, columnVal, isUser }));
+    }
+
+    setData(newData);
   };
 
   const columns = [
@@ -31,12 +52,16 @@ function SystemPrivGrantRevoke({ isUser }) {
       key: 'granted',
       render: (value, record) => (
         <Checkbox
-          defaultChecked={value}
+          checked={value}
           onChange={(e) =>
-            onPrivChecked(record.privilege, {
-              key: 'granted',
-              value: e.target.checked,
-            })
+            onPrivChecked(
+              record.privilege,
+              {
+                key: 'granted',
+                value: e.target.checked,
+              },
+              record.key,
+            )
           }
         />
       ),
@@ -48,12 +73,16 @@ function SystemPrivGrantRevoke({ isUser }) {
       key: 'admin',
       render: (value, record) => (
         <Checkbox
-          defaultChecked={value}
+          checked={value}
           onChange={(e) =>
-            onPrivChecked(record.privilege, {
-              key: 'admin',
-              value: e.target.checked,
-            })
+            onPrivChecked(
+              record.privilege,
+              {
+                key: 'admin',
+                value: e.target.checked,
+              },
+              record.key,
+            )
           }
         />
       ),

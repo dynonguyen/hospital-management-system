@@ -49,7 +49,6 @@ exports.getUserList = async (req, res, next) => {
 		res.locals.user,
 		res.locals.password,
 	);
-
 	try {
 		const sql = `
 		SELECT User_Id,
@@ -135,7 +134,7 @@ exports.delUser = async (req, res, next) => {
 	);
 	try {
 		const { username } = req.query;
-		const sql = `DROP USER ${username} CASCADE`;
+		const sql = `DROP USER "${username}" CASCADE`;
 		const result = await oracleConnect.execute(sql);
 		if (result) return res.status(200).json({ message: 'success' });
 	} catch (error) {
@@ -167,5 +166,41 @@ exports.putChangePassword = async (req, res, next) => {
 		return res.status(400).json({ message: 'failed' });
 	} finally {
 		oracleConnect.close();
+	}
+};
+
+exports.postCreateUser = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { createSql, sqlList, defaultRole } = req.body;
+		console.log(defaultRole);
+		const createRes = await oracleConnect.execute(createSql);
+		if (createRes) {
+			const grantRes = await Promise.all(
+				sqlList.map(async (sql, index) => {
+					await oracleConnect.execute(sql);
+				}),
+			);
+
+			if (grantRes) {
+				if (defaultRole !== '') await oracleConnect.execute(defaultRole);
+				return res.status(200).json({ message: 'success' });
+			}
+		}
+	} catch (error) {
+		console.error('POST CREATE USER ERROR: ', error);
+		if (error.errorNum === 1920) {
+			console.log('object');
+			return res.status(409).json({
+				message:
+					'Đã tồn tại username hoặc role trùng tên. Hãy đổi username khác!',
+			});
+		}
+		return res
+			.status(400)
+			.json({ message: 'Tạo user không thành công ! Thử lại.' });
 	}
 };
