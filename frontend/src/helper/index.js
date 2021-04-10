@@ -112,6 +112,28 @@ function convertRoleSql(roles = [], username = '', type = 0, isRole = false) {
   }
 }
 
+// fn: chuyển đổi mảng granted, revoke
+function convertGrantRevoke(roles = [], username = '', isRole = false) {
+  let sqlList = [];
+  roles.forEach((item, index) => {
+    const { roleName, granted, admin, isRevoke } = item;
+    if (granted && isRevoke === false) {
+      sqlList.push(
+        `GRANT "${roleName}" TO ${isRole ? username : `"${username}"`}${
+          admin ? ' WITH ADMIN OPTION' : ''
+        }`,
+      );
+    }
+
+    if (!granted && isRevoke) {
+      sqlList.push(
+        `REVOKE "${roleName}" FROM ${isRole ? username : `"${username}"`}`,
+      );
+    }
+  });
+  return sqlList;
+}
+
 // fn : chuyển đổi mảng granted role thành sql query
 function convertPrivSql(privs = [], username = '', isRole = false) {
   let sqlList = [];
@@ -159,4 +181,5 @@ export default {
   convertRoleSql,
   convertPrivSql,
   convertCreateUserInfo,
+  convertGrantRevoke,
 };

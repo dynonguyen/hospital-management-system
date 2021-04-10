@@ -266,6 +266,7 @@ exports.getUserRolePriv = async (req, res, next) => {
 			const grantedRole = roles.map((item) => {
 				return {
 					roleName: item.GRANTED_ROLE,
+					granted: true,
 					admin: item.ADMIN_OPTION === 'NO' ? false : true,
 					default: item.DEFAULT_ROLE === 'NO' ? false : true,
 				};
@@ -274,6 +275,7 @@ exports.getUserRolePriv = async (req, res, next) => {
 			const grantedPriv = privs.map((item) => {
 				return {
 					privilege: item.PRIVILEGE,
+					granted: true,
 					admin: item.ADMIN_OPTION === 'NO' ? false : true,
 				};
 			});
@@ -281,16 +283,38 @@ exports.getUserRolePriv = async (req, res, next) => {
 			return res.status(200).json({ grantedRole, grantedPriv });
 		}
 	} catch (error) {
-		console.log('GET USER ROLE PRIV ERROR: ', error);
+		console.error('GET USER ROLE PRIV ERROR: ', error);
 		return res.status(400).json({ message: 'failed' });
 	} finally {
 		oracleConnect.close();
 	}
 };
 
-exports.gerBriefUserInfo = async (req, res, next) => {
+exports.getBriefUserInfo = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
 	try {
 		const { username } = req.query;
-		console.log(username);
-	} catch (error) {}
+		const sql = `SELECT Account_Status,
+		Default_Tablespace,
+		Temporary_Tablespace,Editions_Enabled
+		FROM Dba_Users WHERE Username='${username}'`;
+		const result = await oracleConnect.execute(sql);
+		if (result) {
+			const data = result.rows[0];
+			return res.status(200).json({
+				isLocked: data.ACCOUNT_STATUS === 'OPEN' ? false : true,
+				defaultTableSpace: data.DEFAULT_TABLESPACE,
+				tempTableSpace: data.TEMPORARY_TABLESPACE,
+				isEdition: data.EDITIONS_ENABLED === 'N' ? false : true,
+			});
+		}
+	} catch (error) {
+		console.error('GET BRIEF USER INFO ERROR:', error);
+		return res.status(400).json({ message: false });
+	} finally {
+		oracleConnect.close();
+	}
 };

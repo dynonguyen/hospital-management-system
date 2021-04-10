@@ -21,15 +21,16 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
   const { tableSpaceList, tempTableSpaceList } = useSelector(
     (state) => state.system,
   );
+  const { editedUserInfo } = useSelector((state) => state.userRole);
   const dispatch = useDispatch();
   const initialForm = {
     username: isEdit ? name : '',
     password: '',
     confirmPw: '',
-    isLocked: false,
-    isEdition: false,
-    defaultTableSpace: '',
-    tempTableSpace: '',
+    isLocked: isEdit ? editedUserInfo.isLocked : false,
+    isEdition: isEdit ? editedUserInfo.isEdition : false,
+    defaultTableSpace: isEdit ? editedUserInfo.defaultTableSpace : '',
+    tempTableSpace: isEdit ? editedUserInfo.tempTableSpace : '',
   };
 
   const onInputChange = (key, value) => {
@@ -152,7 +153,7 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
           name="isLocked"
           onChange={(e) => onInputChange('isLocked', e.target.checked)}
           valuePropName="checked">
-          <Checkbox defaultChecked={false} />
+          <Checkbox />
         </Form.Item>
 
         {/* edition enabled */}
@@ -163,7 +164,7 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
           name="isEdition"
           onChange={(e) => onInputChange('isEdition', e.target.checked)}
           valuePropName="checked">
-          <Checkbox defaultChecked={false} />
+          <Checkbox />
         </Form.Item>
       </Form>
     </div>

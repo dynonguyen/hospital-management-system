@@ -1,11 +1,13 @@
 import { Button, Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGrantedPrivs } from 'redux/slices/sql.slice';
 
-function SystemPrivGrantRevoke({ isUser }) {
+function SystemPrivGrantRevoke({ isUser, isEdit }) {
   const { sysPrivList } = useSelector((state) => state.system);
+  const { grantedPriv } = useSelector((state) => state.userRole);
+
   const dispatch = useDispatch();
   const [data, setData] = useState(() =>
     sysPrivList.map((item, key) => ({
@@ -90,6 +92,18 @@ function SystemPrivGrantRevoke({ isUser }) {
     },
   ];
 
+  useEffect(() => {
+    if (isEdit) {
+      let newData = [...data];
+      grantedPriv.forEach((item, key) => {
+        const index = newData.findIndex((i) => i.privilege === item.privilege);
+        newData[index] = { ...item, key: `key-${key}` };
+      });
+      setData(newData);
+    }
+    return () => {};
+  }, []);
+
   return (
     <div className="sa-grant-content">
       {/* control */}
@@ -116,10 +130,12 @@ function SystemPrivGrantRevoke({ isUser }) {
 
 SystemPrivGrantRevoke.propTypes = {
   isUser: PropTypes.bool,
+  isEdit: PropTypes.bool,
 };
 
 SystemPrivGrantRevoke.defaultProps = {
   isUser: true,
+  isEdit: false,
 };
 
 export default SystemPrivGrantRevoke;

@@ -1,46 +1,61 @@
-import { Select } from 'antd';
+import { Select, Spin } from 'antd';
 import systemApi from 'apis/systemApi';
 import GrantRevoke from 'components/SystemAdmin/GrantRevoke';
 import helper from 'helper';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEditName } from 'redux/slices/sql.slice';
+import { setEditedUserInfo, setGrantedInit } from 'redux/slices/userRole.slice';
 
 function EditGrantUserRole() {
+  const [isLoading, setIsLoading] = useState(false);
   const { usernameList, roleList } = useSelector((state) => state.system);
   const [usernameSelected, setUsernameSelected] = useState('');
   const isRole = useRef(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let isSubscribe = true;
+    dispatch(setEditName(usernameSelected));
     (async function getUserRolePriv() {
+      setIsLoading(true);
       try {
         if (usernameSelected !== '') {
-          const res = await systemApi.getUserRolePriv(usernameSelected);
-          if (res) {
-            console.log(res.data);
-          }
-        }
-      } catch (error) {}
-    })();
+          const res = isRole.current
+            ? await systemApi.getUserRolePriv(usernameSelected)
+            : await Promise.all([
+                await systemApi.getBriefUserInfo(usernameSelected),
+                await systemApi.getUserRolePriv(usernameSelected),
+              ]);
 
-    if (!isRole.current) {
-      (async function getUserRolePriv() {
-        try {
-          if (usernameSelected !== '') {
-            const res = await systemApi.getUserRolePriv(usernameSelected);
-            if (res) {
-              console.log(res.data);
+          if (res) {
+            if (isSubscribe) {
+              if (!isRole.current) {
+                dispatch(setEditedUserInfo(res[0].data));
+                dispatch(setGrantedInit(res[1].data));
+              } else {
+                dispatch(setGrantedInit(res.data));
+              }
+              setIsLoading(false);
             }
           }
-        } catch (error) {}
-      })();
-    }
+        }
+      } catch (error) {
+      } finally {
+        if (isSubscribe) setIsLoading(false);
+      }
+    })();
+
     return () => (isSubscribe = false);
   }, [usernameSelected]);
 
   const onSelectChange = (val) => {
     isRole.current = val.indexOf('(ROLE)') !== -1;
     setUsernameSelected(val.split(' ')[0]);
+  };
+
+  const onEditUserRolePriv = (e, record, key) => {
+    console.log(e, record, key);
   };
 
   return (
@@ -60,8 +75,19 @@ function EditGrantUserRole() {
           {helper.renderOptions(roleList, true)}
         </Select>
       </div>
-      {usernameSelected !== '' && (
-        <GrantRevoke isEdit={true} isUser={true} username={usernameSelected} />
+      {isLoading ? (
+        <Spin tip="Đang tải dữ liệu" size="large" className="trans-center" />
+      ) : (
+        <>
+          {usernameSelected !== '' && (
+            <GrantRevoke
+              isEdit={true}
+              isUser={!isRole.current}
+              username={usernameSelected}
+              onEditUserRolePriv={onEditUserRolePriv}
+            />
+          )}
+        </>
       )}
     </>
   );

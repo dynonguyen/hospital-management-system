@@ -16,6 +16,8 @@ const sqlSlice = createSlice({
     createUserPrivs: [],
     createRolePrivs: [],
     createRoleName: '',
+    editUserRole: [],
+    editName: '',
   },
   reducers: {
     setGrantedRoles(state, action) {
@@ -78,6 +80,41 @@ const sqlSlice = createSlice({
     setCreateRoleName(state, action) {
       state.createRoleName = action.payload;
     },
+    setEditUserRole(state, action) {
+      const {
+        roleName,
+        granted,
+        admin,
+        default: isDefault,
+        key,
+      } = action.payload;
+
+      const isRevoke = key.toString().indexOf('revoke') !== -1;
+      const list = state.editUserRole;
+      const index = list.findIndex((item) => item.roleName === roleName);
+
+      if (index === -1) {
+        let newRow = {
+          roleName,
+          granted,
+          admin,
+          default: isDefault,
+          isRevoke,
+        };
+        state.editUserRole.push(newRow);
+      } else {
+        state.editUserRole[index] = {
+          roleName,
+          granted,
+          admin,
+          default: isDefault,
+          isRevoke,
+        };
+      }
+    },
+    setEditName(state, action) {
+      state.editName = action.payload;
+    },
   },
 });
 
@@ -88,5 +125,7 @@ export const {
   setGrantedPrivs,
   setCreateUserInfo,
   setCreateRoleName,
+  setEditUserRole,
+  setEditName,
 } = actions;
 export default reducer;

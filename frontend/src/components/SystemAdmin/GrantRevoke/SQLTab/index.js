@@ -4,7 +4,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import './index.scss';
 
-function SQLTab({ isUser }) {
+function SQLTab({ isUser, isEdit }) {
   const {
     createUserRoles,
     createUserPrivs,
@@ -12,12 +12,14 @@ function SQLTab({ isUser }) {
     createRoleName,
     createRoleRoles,
     createRolePrivs,
+    editUserRole,
+    editName,
   } = useSelector((state) => state.sql);
 
   const { username } = useSelector((state) => state.user);
   return (
     <div className="sa-grant-content sql-grant">
-      {isUser ? (
+      {isUser && isEdit === false ? (
         <>
           {/* create user/role */}
           {createUserInfo.username !== '' && (
@@ -93,15 +95,35 @@ function SQLTab({ isUser }) {
           )}
         </>
       )}
+
+      {isEdit && (
+        <>
+          {/* granted/revoke roles */}
+          {editUserRole.length > 0 && (
+            <>
+              <h3 className="sql-grant-title">------ GRANTED/REVOKE ROLES: </h3>
+              {helper
+                .convertGrantRevoke(editUserRole, editName)
+                .map((item, key) => (
+                  <p key={key} className="sql-grant-code granted-roles">
+                    {item};
+                  </p>
+                ))}
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
 SQLTab.propTypes = {
   isUser: PropTypes.bool,
+  isEdit: PropTypes.bool,
 };
 SQLTab.defaultProps = {
   isUser: true,
+  isEdit: false,
 };
 
 export default SQLTab;

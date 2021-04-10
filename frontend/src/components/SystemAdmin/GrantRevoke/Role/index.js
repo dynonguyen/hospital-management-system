@@ -1,11 +1,12 @@
 import { Input } from 'antd';
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setCreateRoleName } from 'redux/slices/sql.slice';
 
 let timeout = null;
 
-function CreateRoleGrantRevoke() {
+function CreateRoleGrantRevoke({ isEdit, roleName }) {
   const [inputError, setInputError] = useState('');
   const dispatch = useDispatch();
   const checkInput = (e) => {
@@ -32,12 +33,29 @@ function CreateRoleGrantRevoke() {
           Role Name:
         </label>
         <div className="w-100">
-          <Input autoFocus onChange={checkInput} name="roleName" size="large" />
+          <Input
+            disabled={isEdit}
+            autoFocus
+            onChange={checkInput}
+            defaultValue={isEdit ? roleName : ''}
+            name="roleName"
+            size="large"
+          />
           <p className="text-error m-t-8">{inputError}</p>
         </div>
       </div>
     </div>
   );
 }
+
+CreateRoleGrantRevoke.propTypes = {
+  isEdit: PropTypes.bool,
+  roleName: PropTypes.string,
+};
+
+CreateRoleGrantRevoke.defaultProps = {
+  isEdit: false,
+  roleName: '',
+};
 
 export default CreateRoleGrantRevoke;

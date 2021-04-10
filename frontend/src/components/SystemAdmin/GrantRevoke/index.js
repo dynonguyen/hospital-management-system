@@ -17,13 +17,22 @@ import UserGrantRevoke from './User';
 const { TabPane } = Tabs;
 
 function GrantRevoke(props) {
-  const { isUser, isEdit, username, onCreateUser, onCreateRole } = props;
+  const {
+    isUser,
+    isEdit,
+    username,
+    onCreateUser,
+    onCreateRole,
+    onEditUserRolePriv,
+  } = props;
   const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
     isEdit ? username : ''
   }`;
 
   const btnProps = isUser
-    ? { htmlType: 'submit', form: 'grant-form' }
+    ? isEdit
+      ? { onClick: onEditUserRolePriv }
+      : { htmlType: 'submit', form: 'grant-form' }
     : {
         onClick: onCreateRole,
       };
@@ -49,7 +58,11 @@ function GrantRevoke(props) {
                 name={username}
               />
             ) : (
-              <CreateRoleGrantRevoke onCreateRole={onCreateRole} />
+              <CreateRoleGrantRevoke
+                isEdit={isEdit}
+                roleName={username}
+                onCreateRole={onCreateRole}
+              />
             )}
           </TabPane>
 
@@ -74,7 +87,7 @@ function GrantRevoke(props) {
               </span>
             }
             key="priv">
-            <SystemPrivGrantRevoke isUser={isUser} />
+            <SystemPrivGrantRevoke isUser={isUser} isEdit={isEdit} />
           </TabPane>
 
           {/* table privileges */}
@@ -98,10 +111,11 @@ function GrantRevoke(props) {
               </span>
             }
             key="sql">
-            <SQLTab isUser={isUser} />
+            <SQLTab isUser={isUser} isEdit={isEdit} />
           </TabPane>
         </Tabs>
 
+        {/* button action */}
         <div className="t-right w-100">
           <Button
             type="dashed"
@@ -131,6 +145,7 @@ GrantRevoke.propTypes = {
   username: PropTypes.string,
   onCreateUser: PropTypes.func,
   onCreateRole: PropTypes.func,
+  onEditUserRolePriv: PropTypes.func,
 };
 
 GrantRevoke.defaultProps = {
@@ -139,6 +154,7 @@ GrantRevoke.defaultProps = {
   username: '',
   onCreateUser: () => {},
   onCreateRole: () => {},
+  onEditUserRolePriv: () => {},
 };
 
 export default GrantRevoke;
