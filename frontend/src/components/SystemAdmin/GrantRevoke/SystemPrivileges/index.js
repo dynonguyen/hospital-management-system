@@ -2,7 +2,7 @@ import { Button, Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGrantedPrivs } from 'redux/slices/sql.slice';
+import { grantAllSysPriv, setGrantedPrivs } from 'redux/slices/sql.slice';
 
 function SystemPrivGrantRevoke({ isUser, isEdit }) {
   const { sysPrivList } = useSelector((state) => state.system);
@@ -104,14 +104,61 @@ function SystemPrivGrantRevoke({ isUser, isEdit }) {
     return () => {};
   }, []);
 
+  // event control button
+  const handleGrantAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: true,
+    }));
+    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleRevokeAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: false,
+      admin: false,
+    }));
+    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleAdminAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: true,
+      admin: true,
+    }));
+    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleAdminNone = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      admin: false,
+    }));
+    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    setData(newData);
+  };
+
   return (
     <div className="sa-grant-content">
       {/* control */}
       <div className="flex-center-start">
-        <Button type="default">Grant All</Button>
-        <Button type="default m-lr-8">Revoke All</Button>
-        <Button type="default">Admin All</Button>
-        <Button type="default m-8">Admin None</Button>
+        <Button type="default" onClick={handleGrantAll}>
+          Grant All
+        </Button>
+        <Button type="default m-lr-8" onClick={handleRevokeAll}>
+          Revoke All
+        </Button>
+        <Button type="default" onClick={handleAdminAll}>
+          Admin All
+        </Button>
+        <Button type="default m-8" onClick={handleAdminNone}>
+          Admin None
+        </Button>
       </div>
 
       {/* grant table */}
