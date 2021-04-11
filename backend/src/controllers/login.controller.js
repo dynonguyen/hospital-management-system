@@ -1,16 +1,32 @@
 const oracle = require('../configs/oracle');
 const jwt = require('jsonwebtoken');
 
+const getUserRole = async (oracle) => {
+	try {
+		// get user
+		const getUserRes = await oracle.execute(
+			`SELECT sys_context('USERENV', 'CURRENT_USER') as CURRENT_USER FROM dual`,
+		);
+		const currentUser = getUserRes.rows[0].CURRENT_USER;
+
+		// get role of user
+		const getRoleRes = await oracle.execute(`SELECT * FROM SESSION_ROLES`);
+		const roles = getRoleRes.rows.map((item) => item.ROLE);
+
+		return { roles, currentUser };
+	} catch (error) {
+		console.log(error);
+		return {};
+	}
+};
+
 exports.postLogin = async (req, res, next) => {
 	try {
 		const { username, password } = req.body;
 		const oracleConnect = await oracle.connect(username, password);
 		if (oracleConnect) {
-			// get user
-			const result = await oracleConnect.execute(
-				`SELECT sys_context('USERENV', 'CURRENT_USER') as CURRENT_USER FROM dual`,
-			);
-			const currentUser = result.rows[0].CURRENT_USER;
+			// get current user, role
+			const { currentUser, roles } = await getUserRole(oracleConnect);
 
 			// create json web token
 			const jwtEncoded = jwt.sign(
@@ -28,7 +44,8 @@ exports.postLogin = async (req, res, next) => {
 			});
 			return res.status(200).json({
 				message: `Đăng nhập thành công với quyền ${currentUser}`,
-				username,
+				username: currentUser,
+				roles,
 			});
 		}
 	} catch (error) {
@@ -40,6 +57,13 @@ exports.postLogin = async (req, res, next) => {
 					'Đăng nhập thất bại. Người dùng không tồn tại hoắc sai mật khẩu',
 			});
 		}
+		// the account is locked
+		else if (errorNum === 28000) {
+			return res.status(401).json({
+				message: 'Tài khoản đã bị khoá. Hãy liên hệ với quản trị viên.',
+			});
+		}
+
 		// user lacks CREATE SESSION privilege; logon denied]
 		else if (errorNum === 1045) {
 			return res.status(401).json({
@@ -65,11 +89,8 @@ exports.getUser = async (req, res, next) => {
 
 		const oracleConnect = await oracle.connect(username, password);
 		if (oracleConnect) {
-			const result = await oracleConnect.execute(
-				`SELECT sys_context('USERENV', 'CURRENT_USER') as CURRENT_USER FROM dual`,
-			);
-			const currentUser = result.rows[0].CURRENT_USER;
-			return res.status(200).json({ username: currentUser });
+			const { currentUser, roles } = await getUserRole(oracleConnect);
+			return res.status(200).json({ username: currentUser, roles });
 		} else {
 			return res.status(401).json({ username: '' });
 		}

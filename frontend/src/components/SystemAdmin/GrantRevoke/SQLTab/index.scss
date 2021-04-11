@@ -1,0 +1,34 @@
+.sql-grant {
+  max-height: 50rem;
+  overflow-y: scroll;
+
+  &-title {
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: #ccc;
+    margin-bottom: 8px;
+  }
+
+  &-code {
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    word-break: break-all;
+
+    &.create {
+      color: #eb874f;
+    }
+
+    &.granted-roles {
+      color: #106fae;
+    }
+
+    &.sys-privs {
+      color: rgb(13, 194, 13);
+    }
+
+    &.table-priv {
+      color: #f575c0;
+    }
+  }
+}

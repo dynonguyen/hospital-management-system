@@ -1,13 +1,13 @@
-import React from 'react';
-import logoUrl from 'assets/images/logo.png';
-import './index.scss';
-import { Link } from 'react-router-dom';
-import adminIcon from 'assets/icons/admin.png';
+import { Tooltip } from 'antd';
 import accountSalaryIcon from 'assets/icons/accounting-salary.png';
+import adminIcon from 'assets/icons/admin.png';
 import doctorIcon from 'assets/icons/doctor.png';
 import pharmacistIcon from 'assets/icons/pharmacist.png';
 import receptionistIcon from 'assets/icons/receptionist.png';
-import { Tooltip } from 'antd';
+import logoUrl from 'assets/images/logo.png';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './index.scss';
 
 function Navigation() {
   return (
@@ -27,7 +27,7 @@ function Navigation() {
           <li className="control-item active">
             <Tooltip title="Quản trị viên" placement="bottom">
               <img src={adminIcon} alt="Icon" />
-              <h3>Quản trị viên</h3>
+              <h3>Quản lý</h3>
             </Tooltip>
           </li>
           <li className="control-item">

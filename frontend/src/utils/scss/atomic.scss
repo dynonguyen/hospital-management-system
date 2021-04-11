@@ -58,6 +58,10 @@
   }
 }
 
+.admin-box-sha {
+  box-shadow: 0 0 5px 3px rgba(#000, 0.06);
+}
+
 @media only screen and (max-width: 767px) {
   .main-content {
     padding-left: 0;

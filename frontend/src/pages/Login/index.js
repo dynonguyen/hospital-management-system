@@ -31,11 +31,15 @@ function LoginPage() {
   // event on login
   const onLogin = async ({ username, password }) => {
     try {
+      if (username.toLowerCase() === 'sys') {
+        message.warn('Bạn không thể truy cập với quyền SYS', 2);
+        return;
+      }
       const response = await loginApi.postLogin(username, password);
       if (response && response.status === 200) {
         // set is auth
-        dispatch(setUser(response.data.username));
-
+        const { username, roles } = response.data;
+        dispatch(setUser({ username, roles }));
         message.success(response.data.message, 2);
       }
     } catch (error) {

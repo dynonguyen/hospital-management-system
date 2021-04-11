@@ -1,9 +1,4 @@
-import {
-  FileTextOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  UsergroupAddOutlined,
-} from '@ant-design/icons';
+import { TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { Col, Menu, Row } from 'antd';
 import routerConfig from 'configs/routerConfig';
 import constant from 'constant';
@@ -13,14 +8,14 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.scss';
 import TotalStaff from './TotalStaff';
 
-const ADMIN_ROUTES = constant.ROUTES.ADMIN;
+const MANAGE_ROUTES = constant.ROUTES.MANAGE;
 
 // Menu chỉ bao gồm 1 cấp sub menu
 const menu = [
   // xem nhân viên
   {
     isSubMenu: false,
-    to: ADMIN_ROUTES.VIEW_LIST,
+    to: MANAGE_ROUTES.VIEW_LIST,
     title: 'Danh sách nhân viên',
     icon: <TeamOutlined />,
   },
@@ -31,19 +26,19 @@ const menu = [
     icon: <UsergroupAddOutlined />,
     list: [
       {
-        to: ADMIN_ROUTES.ADD_STAFF,
+        to: MANAGE_ROUTES.ADD_STAFF,
         title: 'Nhân viên',
       },
       {
-        to: ADMIN_ROUTES.ADD_DOCTOR,
+        to: MANAGE_ROUTES.ADD_DOCTOR,
         title: 'Bác sĩ',
       },
     ],
   },
 ];
 
-function AdminView() {
-  const { renderRoutes, adminRoutes } = routerConfig;
+function ManageView() {
+  const { renderRoutes, manageRoutes } = routerConfig;
 
   return (
     <Router>
@@ -58,7 +53,7 @@ function AdminView() {
           {/* main content */}
           <Col className="main-content" span={24} md={18}>
             <Switch>
-              {renderRoutes(adminRoutes, true)}
+              {renderRoutes(manageRoutes, true)}
               <Route component={TotalStaff} />
             </Switch>
           </Col>
@@ -68,4 +63,4 @@ function AdminView() {
   );
 }
 
-export default AdminView;
+export default ManageView;
