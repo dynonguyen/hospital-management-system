@@ -158,6 +158,12 @@ const sqlSlice = createSlice({
       if (isUser) state.createUserPrivs = list;
       else state.createRolePrivs = list;
     },
+    grantAllTable(state, action) {
+      state.createUserTable = action.payload;
+    },
+    resetEditUserRole(state, action) {
+      state.editUserRole = [];
+    },
   },
 });
 
@@ -174,5 +180,7 @@ export const {
   resetCreateUserInfo,
   grantAllRole,
   grantAllSysPriv,
+  grantAllTable,
+  resetEditUserRole,
 } = actions;
 export default reducer;

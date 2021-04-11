@@ -1,15 +1,18 @@
-import { Select, Spin } from 'antd';
+import { message, Select, Spin } from 'antd';
 import systemApi from 'apis/systemApi';
 import GrantRevoke from 'components/SystemAdmin/GrantRevoke';
 import helper from 'helper';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditName } from 'redux/slices/sql.slice';
+import { resetEditUserRole, setEditName } from 'redux/slices/sql.slice';
 import { setEditedUserInfo, setGrantedInit } from 'redux/slices/userRole.slice';
 
 function EditGrantUserRole() {
   const [isLoading, setIsLoading] = useState(false);
   const { usernameList, roleList } = useSelector((state) => state.system);
+  const { createUserInfo, editUserRole, editName } = useSelector(
+    (state) => state.sql,
+  );
   const [usernameSelected, setUsernameSelected] = useState('');
   const isRole = useRef(false);
   const dispatch = useDispatch();
@@ -17,6 +20,7 @@ function EditGrantUserRole() {
   useEffect(() => {
     let isSubscribe = true;
     dispatch(setEditName(usernameSelected));
+    dispatch(resetEditUserRole());
     (async function getUserRolePriv() {
       setIsLoading(true);
       try {
@@ -54,13 +58,31 @@ function EditGrantUserRole() {
     setUsernameSelected(val.split(' ')[0]);
   };
 
-  const onEditUserRolePriv = (e, record, key) => {
-    console.log(e, record, key);
+  const onEditUserRolePriv = async () => {
+    try {
+      const username = usernameSelected;
+      if (username.toLowerCase() === 'sys') {
+        message.warn('Bạn không nên chỉnh sửa user SYS !');
+        return;
+      }
+      const alterSql = helper.convertAlterUserRole(username, createUserInfo);
+      const sqlList = helper.convertGrantRevoke(editUserRole, editName);
+      const res = await systemApi.putEditUserRole([alterSql, ...sqlList]);
+      if (res) {
+        message.success(`Chỉnh sửa user ${username} thành công !`, 1);
+        setUsernameSelected('');
+        return;
+      }
+    } catch (error) {
+      if (error.response) {
+        message.error(error.response.data.message, 2);
+      }
+    }
   };
 
   return (
     <>
-      <div className="p-lr-32 p-t-32">
+      <div className="p-lr-32 p-t-12">
         <Select
           placeholder="Select a User/Role"
           size="large"

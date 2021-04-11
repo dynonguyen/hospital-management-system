@@ -11,14 +11,16 @@ const userRole = createSlice({
     },
     grantedPriv: [],
     grantedRole: [],
+    grantedTable: [],
   },
   reducers: {
     setEditedUserInfo(state, action) {
       state.editedUserInfo = action.payload;
     },
     setGrantedInit(state, action) {
-      (state.grantedPriv = action.payload.grantedPriv),
-        (state.grantedRole = action.payload.grantedRole);
+      state.grantedPriv = action.payload.grantedPriv;
+      state.grantedRole = action.payload.grantedRole;
+      state.grantedTable = action.payload.grantedTable;
     },
   },
 });

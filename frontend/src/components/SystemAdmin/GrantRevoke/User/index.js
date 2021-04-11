@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Select } from 'antd';
+import { Checkbox, Form, Input, Select } from 'antd';
 import helper from 'helper';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -81,7 +81,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name, handleForm }) {
             onChange={(e) => onInputChange('username', e.target.value)}
           />
         </Form.Item>
-
         {/* password */}
         <Form.Item
           name="password"

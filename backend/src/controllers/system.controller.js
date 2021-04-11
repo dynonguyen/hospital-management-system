@@ -160,10 +160,10 @@ exports.putChangePassword = async (req, res, next) => {
 		const { newPw, username, isLocked } = req.body;
 		let sql =
 			newPw.trim() !== ''
-				? `ALTER USER ${username} IDENTIFIED BY ${newPw} ACCOUNT ${
+				? `ALTER USER "${username}" IDENTIFIED BY ${newPw} ACCOUNT ${
 						isLocked ? 'LOCK' : 'UNLOCK'
 				  }`
-				: `ALTER USER ${username} ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'}`;
+				: `ALTER USER "${username}" ACCOUNT ${isLocked ? 'LOCK' : 'UNLOCK'}`;
 
 		const result = await oracleConnect.execute(sql);
 		if (result) return res.status(200).json({ message: 'success' });
@@ -269,10 +269,17 @@ exports.getUserRolePriv = async (req, res, next) => {
 					`SELECT * FROM Dba_Sys_Privs WHERE Grantee = '${name}'`,
 				),
 			},
+			{
+				table: await oracleConnect.execute(
+					`SELECT Table_Name, Privilege FROM Dba_Tab_Privs WHERE Grantee = '${name}'`,
+				),
+			},
 		]);
 		if (result) {
 			const roles = result[0].role.rows,
-				privs = result[1].priv.rows;
+				privs = result[1].priv.rows,
+				table = result[2].table.rows;
+
 			const grantedRole = roles.map((item) => {
 				return {
 					roleName: item.GRANTED_ROLE,
@@ -290,7 +297,29 @@ exports.getUserRolePriv = async (req, res, next) => {
 				};
 			});
 
-			return res.status(200).json({ grantedRole, grantedPriv });
+			let grantedTable = [];
+			table.forEach((item) => {
+				const { TABLE_NAME, PRIVILEGE } = item;
+				const index = grantedTable.findIndex((i) => {
+					return i.tableName === TABLE_NAME;
+				});
+				console.log(index);
+				if (index === -1) {
+					let obj = {
+						tableName: TABLE_NAME,
+						select: false,
+						update: false,
+						delete: false,
+						insert: false,
+					};
+					obj[PRIVILEGE.toLowerCase()] = true;
+					grantedTable.push(obj);
+				} else {
+					grantedTable[index][PRIVILEGE.toLowerCase()] = true;
+				}
+			});
+
+			return res.status(200).json({ grantedRole, grantedPriv, grantedTable });
 		}
 	} catch (error) {
 		console.error('GET USER ROLE PRIV ERROR: ', error);
@@ -325,6 +354,28 @@ exports.getBriefUserInfo = async (req, res, next) => {
 	} catch (error) {
 		console.error('GET BRIEF USER INFO ERROR:', error);
 		return res.status(400).json({ message: false });
+	} finally {
+		oracleConnect.close();
+	}
+};
+
+exports.putEditUserRole = async (req, res, next) => {
+	const oracleConnect = await oracle.connect(
+		res.locals.user,
+		res.locals.password,
+	);
+	try {
+		const { sqlList } = req.body;
+		const editRes = await Promise.all(
+			sqlList.map(async (sql, index) => {
+				await oracleConnect.execute(sql);
+			}),
+		);
+		if (editRes) {
+			return res.status(200).json({ message: 'success' });
+		}
+	} catch (error) {
+		return res.status(400).json({ message: 'Chỉnh sửa user/role thất bại !' });
 	} finally {
 		oracleConnect.close();
 	}

@@ -198,6 +198,25 @@ function convertTablePrivilege(list = [], name, isRole = false) {
   return sqlList;
 }
 
+// fn : convert alter user/role
+function convertAlterUserRole(username, userInfo) {
+  const {
+    password,
+    defaultTableSpace,
+    tempTableSpace,
+    isLocked,
+    isEdition,
+  } = userInfo;
+
+  return `ALTER USER "${username}"${
+    password !== '' ? ` IDENTIFIED BY "${password}"` : ''
+  }${
+    defaultTableSpace !== '' ? ` DEFAULT TABLESPACE "${defaultTableSpace}"` : ''
+  }${tempTableSpace !== '' ? ` TEMPORARY TABLESPACE "${tempTableSpace}"` : ''}${
+    isLocked ? ' ACCOUNT LOCK' : ' ACCOUNT UNLOCK'
+  }${isEdition ? ' ENABLE EDITIONS' : ''}`;
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
@@ -209,4 +228,5 @@ export default {
   convertCreateUserInfo,
   convertGrantRevoke,
   convertTablePrivilege,
+  convertAlterUserRole,
 };

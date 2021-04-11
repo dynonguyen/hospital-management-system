@@ -4,6 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { grantAllSysPriv, setGrantedPrivs } from 'redux/slices/sql.slice';
 
+function removeKeyObj(list = []) {
+  return list.map((item) => ({
+    privilege: item.privilege,
+    granted: item.granted,
+    admin: item.granted,
+  }));
+}
+
 function SystemPrivGrantRevoke({ isUser, isEdit }) {
   const { sysPrivList } = useSelector((state) => state.system);
   const { grantedPriv } = useSelector((state) => state.userRole);
@@ -110,7 +118,7 @@ function SystemPrivGrantRevoke({ isUser, isEdit }) {
       ...item,
       granted: true,
     }));
-    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    dispatch(grantAllSysPriv({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
@@ -120,7 +128,7 @@ function SystemPrivGrantRevoke({ isUser, isEdit }) {
       granted: false,
       admin: false,
     }));
-    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    dispatch(grantAllSysPriv({ list: [], isUser }));
     setData(newData);
   };
 
@@ -130,7 +138,7 @@ function SystemPrivGrantRevoke({ isUser, isEdit }) {
       granted: true,
       admin: true,
     }));
-    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    dispatch(grantAllSysPriv({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
@@ -139,27 +147,29 @@ function SystemPrivGrantRevoke({ isUser, isEdit }) {
       ...item,
       admin: false,
     }));
-    dispatch(grantAllSysPriv({ list: newData, isUser }));
+    dispatch(grantAllSysPriv({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
   return (
     <div className="sa-grant-content">
       {/* control */}
-      <div className="flex-center-start">
-        <Button type="default" onClick={handleGrantAll}>
-          Grant All
-        </Button>
-        <Button type="default m-lr-8" onClick={handleRevokeAll}>
-          Revoke All
-        </Button>
-        <Button type="default" onClick={handleAdminAll}>
-          Admin All
-        </Button>
-        <Button type="default m-8" onClick={handleAdminNone}>
-          Admin None
-        </Button>
-      </div>
+      {!isEdit && (
+        <div className="flex-center-start">
+          <Button type="default" onClick={handleGrantAll}>
+            Grant All
+          </Button>
+          <Button type="default m-lr-8" onClick={handleRevokeAll}>
+            Revoke All
+          </Button>
+          <Button type="default" onClick={handleAdminAll}>
+            Admin All
+          </Button>
+          <Button type="default m-8" onClick={handleAdminNone}>
+            Admin None
+          </Button>
+        </div>
+      )}
 
       {/* grant table */}
       <div className="m-t-16">

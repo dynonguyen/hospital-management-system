@@ -137,6 +137,15 @@ function SQLTab({ isUser, isEdit }) {
 
       {isEdit && (
         <>
+          {/* alter  user/roles */}
+          {editName !== '' && (
+            <>
+              <h3 className="sql-grant-title">------ ALTER USER/ROLES: </h3>
+              <p className="sql-grant-code create">
+                {helper.convertAlterUserRole(editName, createUserInfo)};
+              </p>
+            </>
+          )}
           {/* granted/revoke roles */}
           {editUserRole.length > 0 && (
             <>

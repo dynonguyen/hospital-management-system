@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
 import { Button, Checkbox, Table } from 'antd';
-import React from 'react';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCreateUserTable } from 'redux/slices/sql.slice';
+import { grantAllTable, setCreateUserTable } from 'redux/slices/sql.slice';
 
 const expandColumns = [
   {
@@ -28,21 +28,50 @@ const expandColumns = [
   },
 ];
 
-function TablePrivGrantRevoke({ isUser }) {
+function TablePrivGrantRevoke({ isUser, isEdit }) {
   const dispatch = useDispatch();
+  const { grantedTable } = useSelector((state) => state.userRole);
   const { userTableList, colTableList } = useSelector((state) => state.system);
-  const dataMainTable = userTableList.map((item, key) => ({
-    key,
-    tableName: item,
-    select: false,
-    insert: false,
-    update: false,
-    delete: false,
-    grantOption: false,
-  }));
+  const [dataMainTable, setDataMainTable] = useState(() => {
+    return isEdit
+      ? userTableList.map((item, key) => {
+          const index = grantedTable.findIndex((i) => i.tableName === item);
+          if (index === -1)
+            return {
+              key,
+              tableName: item,
+              select: false,
+              insert: false,
+              update: false,
+              delete: false,
+            };
+          return {
+            key,
+            tableName: item,
+            select: grantedTable[index].select,
+            insert: grantedTable[index].insert,
+            update: grantedTable[index].update,
+            delete: grantedTable[index].delete,
+          };
+        })
+      : userTableList.map((item, key) => ({
+          key,
+          tableName: item,
+          select: false,
+          insert: false,
+          update: false,
+          delete: false,
+          grantOption: false,
+        }));
+  });
 
   const onTableChecked = (checked, tableName, key) => {
     dispatch(setCreateUserTable({ checked, tableName, key }));
+    setDataMainTable(
+      dataMainTable.map((item) =>
+        item.tableName === tableName ? { ...item, [key]: checked } : item,
+      ),
+    );
   };
 
   let mainColumns = [
@@ -59,10 +88,10 @@ function TablePrivGrantRevoke({ isUser }) {
       key: 'select',
       render: (value, record) => (
         <Checkbox
-          onChange={(e) =>
-            onTableChecked(e.target.checked, record.tableName, 'select')
-          }
-          defaultChecked={value}
+          onChange={(e) => {
+            onTableChecked(e.target.checked, record.tableName, 'select');
+          }}
+          checked={value}
         />
       ),
     },
@@ -75,7 +104,7 @@ function TablePrivGrantRevoke({ isUser }) {
           onChange={(e) =>
             onTableChecked(e.target.checked, record.tableName, 'insert')
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
     },
@@ -88,7 +117,7 @@ function TablePrivGrantRevoke({ isUser }) {
           onChange={(e) =>
             onTableChecked(e.target.checked, record.tableName, 'update')
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
     },
@@ -101,13 +130,13 @@ function TablePrivGrantRevoke({ isUser }) {
           onChange={(e) =>
             onTableChecked(e.target.checked, record.tableName, 'delete')
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
     },
   ];
 
-  if (isUser)
+  if (isUser && !isEdit)
     mainColumns.push({
       title: 'Grant Option',
       dataIndex: 'grantOption',
@@ -117,12 +146,12 @@ function TablePrivGrantRevoke({ isUser }) {
           onChange={(e) =>
             onTableChecked(e.target.checked, record.tableName, 'grantOption')
           }
-          defaultChecked={value}
+          checked={value}
         />
       ),
     });
 
-  //  columns table of table :">
+  //  columns table of table
   const expandedRowRender = (e) => {
     const { tableName } = e;
 
@@ -142,21 +171,106 @@ function TablePrivGrantRevoke({ isUser }) {
     );
   };
 
+  // event control button
+  const handleGrantAll = () => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      select: true,
+      insert: true,
+      update: true,
+      delete: true,
+      grantOption: true,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
+  const handleRevokeAll = () => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      select: false,
+      insert: false,
+      update: false,
+      delete: false,
+      grantOption: false,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
+  const handleSelectAll = (isGrant = true) => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      select: isGrant,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
+  const handleInsertAll = (isGrant = true) => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      insert: isGrant,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
+  const handleUpdateAll = (isGrant = true) => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      update: isGrant,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
+  const handleDeleteAll = (isGrant = true) => {
+    let newData = dataMainTable.map((item) => ({
+      ...item,
+      delete: isGrant,
+    }));
+    dispatch(grantAllTable(newData));
+    setDataMainTable(newData);
+  };
+
   return (
     <div className="sa-grant-content">
       {/* control */}
-      <div className="flex-center-start">
-        <Button type="default">Grant All</Button>
-        <Button type="default m-lr-8">Revoke All</Button>
-        <Button type="default">Select All</Button>
-        <Button type="default m-lr-8">Select None</Button>
-        <Button type="default">Insert All</Button>
-        <Button type="default m-lr-8">Insert None</Button>
-        <Button type="default">Update All</Button>
-        <Button type="default m-lr-8">Update None</Button>
-        <Button type="default">Delete All</Button>
-        <Button type="default m-8">Delete None</Button>
-      </div>
+      {!isEdit && (
+        <div className="flex-center-start">
+          <Button type="default" onClick={handleGrantAll}>
+            Grant All
+          </Button>
+          <Button type="default m-lr-8" onClick={handleRevokeAll}>
+            Revoke All
+          </Button>
+          <Button type="default" onClick={() => handleSelectAll(true)}>
+            Select All
+          </Button>
+          <Button type="default m-lr-8" onClick={() => handleSelectAll(false)}>
+            Select None
+          </Button>
+          <Button type="default" onClick={() => handleInsertAll(true)}>
+            Insert All
+          </Button>
+          <Button type="default m-lr-8" onClick={() => handleInsertAll(false)}>
+            Insert None
+          </Button>
+          <Button type="default" onClick={() => handleUpdateAll(true)}>
+            Update All
+          </Button>
+          <Button type="default m-lr-8" onClick={() => handleUpdateAll(false)}>
+            Update None
+          </Button>
+          <Button type="default" onClick={() => handleDeleteAll(true)}>
+            Delete All
+          </Button>
+          <Button type="default m-8" onClick={() => handleDeleteAll(false)}>
+            Delete None
+          </Button>
+        </div>
+      )}
 
       {/* grant table */}
       <div className="m-t-16">
@@ -177,10 +291,12 @@ function TablePrivGrantRevoke({ isUser }) {
 
 TablePrivGrantRevoke.propTypes = {
   isUser: PropTypes.bool,
+  isEdit: PropTypes.bool,
 };
 
 TablePrivGrantRevoke.defaultProps = {
   isUser: true,
+  isEdit: false,
 };
 
 export default TablePrivGrantRevoke;

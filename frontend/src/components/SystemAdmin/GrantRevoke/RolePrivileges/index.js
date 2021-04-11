@@ -8,6 +8,15 @@ import {
   setGrantedRoles,
 } from 'redux/slices/sql.slice';
 
+function removeKeyObj(list = []) {
+  return list.map((item) => ({
+    roleName: item.roleName,
+    granted: item.granted,
+    default: item.default,
+    admin: item.admin,
+  }));
+}
+
 function RoleGrantRevoke({ isEdit, isUser }) {
   const { roleList } = useSelector((state) => state.system);
   const { grantedRole } = useSelector((state) => state.userRole);
@@ -184,12 +193,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
     let newData = data.map((item) => ({ ...item, granted: true }));
     dispatch(
       grantAllRole({
-        list: newData.map((item) => ({
-          roleName: item.roleName,
-          granted: item.granted,
-          default: item.default,
-          admin: item.admin,
-        })),
+        list: removeKeyObj(newData),
         isUser,
       }),
     );
@@ -213,7 +217,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       granted: true,
       admin: true,
     }));
-    dispatch(grantAllRole({ list: newData, isUser }));
+    dispatch(grantAllRole({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
@@ -222,7 +226,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       ...item,
       admin: false,
     }));
-    dispatch(grantAllRole({ list: newData, isUser }));
+    dispatch(grantAllRole({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
@@ -232,7 +236,7 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       granted: true,
       default: true,
     }));
-    dispatch(grantAllRole({ list: newData, isUser }));
+    dispatch(grantAllRole({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
@@ -241,37 +245,39 @@ function RoleGrantRevoke({ isEdit, isUser }) {
       ...item,
       default: false,
     }));
-    dispatch(grantAllRole({ list: newData, isUser }));
+    dispatch(grantAllRole({ list: removeKeyObj(newData), isUser }));
     setData(newData);
   };
 
   return (
     <div className="sa-grant-content">
       {/* control */}
-      <div className="flex-center-start">
-        <Button type="default" onClick={handleGrantAll}>
-          Grant All
-        </Button>
-        <Button type="default m-lr-8" onClick={handleRevokeAll}>
-          Revoke All
-        </Button>
-        <Button type="default" onClick={handleAdminAll}>
-          Admin All
-        </Button>
-        <Button type="default m-lr-8" onClick={handleAdminNone}>
-          Admin None
-        </Button>
-        {isUser && (
-          <>
-            <Button type="default" onClick={handleDefaultAll}>
-              Default All
-            </Button>
-            <Button type="default m-8" onClick={handleDefaultNone}>
-              Default None
-            </Button>
-          </>
-        )}
-      </div>
+      {!isEdit && (
+        <div className="flex-center-start">
+          <Button type="default" onClick={handleGrantAll}>
+            Grant All
+          </Button>
+          <Button type="default m-lr-8" onClick={handleRevokeAll}>
+            Revoke All
+          </Button>
+          <Button type="default" onClick={handleAdminAll}>
+            Admin All
+          </Button>
+          <Button type="default m-lr-8" onClick={handleAdminNone}>
+            Admin None
+          </Button>
+          {isUser && (
+            <>
+              <Button type="default" onClick={handleDefaultAll}>
+                Default All
+              </Button>
+              <Button type="default m-8" onClick={handleDefaultNone}>
+                Default None
+              </Button>
+            </>
+          )}
+        </div>
+      )}
 
       {/* grant table */}
       <div className="m-t-16">

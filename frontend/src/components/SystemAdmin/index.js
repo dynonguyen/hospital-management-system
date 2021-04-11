@@ -99,7 +99,7 @@ function renderActiveComponent(key = 'dashboard', list = []) {
 
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState('create-user');
+  const [activeKey, setActiveKey] = useState('grant');
   const { username } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();

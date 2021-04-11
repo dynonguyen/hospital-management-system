@@ -39,6 +39,10 @@ const systemApi = {
     return axiosClient.post(`${URL}/create-role`, { createSql, sqlList });
   },
 
+  putEditUserRole: (sqlList = []) => {
+    return axiosClient.put(`${URL}/edit-user`, { sqlList });
+  },
+
   getUserRolePriv: (name) => {
     return axiosClient.get(`${URL}/user-role-priv`, {
       params: { name },

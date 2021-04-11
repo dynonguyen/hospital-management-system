@@ -17,6 +17,8 @@ systemApi.delete('/user', systemController.delUser);
 
 systemApi.put('/user/pw', systemController.putChangePassword);
 
+systemApi.put('/edit-user', systemController.putEditUserRole);
+
 systemApi.post('/create-user', systemController.postCreateUser);
 
 systemApi.post('/create-role', systemController.postCreateRole);

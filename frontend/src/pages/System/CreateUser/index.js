@@ -5,6 +5,7 @@ import helper from 'helper';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetGrantedRoles } from 'redux/slices/sql.slice';
+
 function CreateUser() {
   const dispatch = useDispatch();
   const { createUserRoles, createUserPrivs, createUserTable } = useSelector(
