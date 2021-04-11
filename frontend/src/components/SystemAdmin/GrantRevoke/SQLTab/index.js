@@ -59,7 +59,6 @@ function SQLTab({ isUser, isEdit }) {
                 </>
               )}
               {/* table privileges */}
-
               {createUserTable.length > 0 && (
                 <>
                   <h3 className="sql-grant-title">------ TABLE PRIVILEGES: </h3>
@@ -114,6 +113,23 @@ function SQLTab({ isUser, isEdit }) {
                     ))}
                 </>
               )}
+              {/* table privileges */}
+              {createUserTable.length > 0 && (
+                <>
+                  <h3 className="sql-grant-title">------ TABLE PRIVILEGES: </h3>
+                  {helper
+                    .convertTablePrivilege(
+                      createUserTable,
+                      createRoleName,
+                      true,
+                    )
+                    .map((item, index) => (
+                      <p className="sql-grant-code table-priv" key={index}>
+                        {item};
+                      </p>
+                    ))}
+                </>
+              )}
             </>
           )}
         </>
@@ -144,6 +160,7 @@ SQLTab.propTypes = {
   isUser: PropTypes.bool,
   isEdit: PropTypes.bool,
 };
+
 SQLTab.defaultProps = {
   isUser: true,
   isEdit: false,

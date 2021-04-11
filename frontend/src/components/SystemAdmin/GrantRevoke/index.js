@@ -114,7 +114,7 @@ function GrantRevoke(props) {
               </span>
             }
             key="table">
-            <TablePrivGrantRevoke />
+            <TablePrivGrantRevoke isUser={isUser} />
           </TabPane>
 
           {/* sql */}

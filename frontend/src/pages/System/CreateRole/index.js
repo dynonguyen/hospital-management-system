@@ -8,9 +8,12 @@ import { resetGrantedRoles } from 'redux/slices/sql.slice';
 
 function CreateRole() {
   const dispatch = useDispatch();
-  const { createRoleName, createRoleRoles, createRolePrivs } = useSelector(
-    (state) => state.sql,
-  );
+  const {
+    createRoleName,
+    createRoleRoles,
+    createRolePrivs,
+    createUserTable,
+  } = useSelector((state) => state.sql);
   const onCreateRole = async () => {
     try {
       if (createRoleName === '') {
@@ -21,6 +24,7 @@ function CreateRole() {
       const sqlList = [
         ...helper.convertRoleSql(createRoleRoles, createRoleName, 0, true),
         ...helper.convertPrivSql(createRolePrivs, createRoleName, true),
+        ...helper.convertTablePrivilege(createUserTable, createRoleName, true),
       ];
 
       const createRes = await systemApi.postCreateRole(

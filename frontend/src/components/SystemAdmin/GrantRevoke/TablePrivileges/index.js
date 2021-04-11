@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Button, Checkbox, Table } from 'antd';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,7 +28,7 @@ const expandColumns = [
   },
 ];
 
-function TablePrivGrantRevoke() {
+function TablePrivGrantRevoke({ isUser }) {
   const dispatch = useDispatch();
   const { userTableList, colTableList } = useSelector((state) => state.system);
   const dataMainTable = userTableList.map((item, key) => ({
@@ -44,7 +45,7 @@ function TablePrivGrantRevoke() {
     dispatch(setCreateUserTable({ checked, tableName, key }));
   };
 
-  const mainColumns = [
+  let mainColumns = [
     {
       title: 'Table',
       dataIndex: 'tableName',
@@ -104,7 +105,10 @@ function TablePrivGrantRevoke() {
         />
       ),
     },
-    {
+  ];
+
+  if (isUser)
+    mainColumns.push({
       title: 'Grant Option',
       dataIndex: 'grantOption',
       key: 'grantOption',
@@ -116,8 +120,7 @@ function TablePrivGrantRevoke() {
           defaultChecked={value}
         />
       ),
-    },
-  ];
+    });
 
   //  columns table of table :">
   const expandedRowRender = (e) => {
@@ -171,5 +174,13 @@ function TablePrivGrantRevoke() {
     </div>
   );
 }
+
+TablePrivGrantRevoke.propTypes = {
+  isUser: PropTypes.bool,
+};
+
+TablePrivGrantRevoke.defaultProps = {
+  isUser: true,
+};
 
 export default TablePrivGrantRevoke;

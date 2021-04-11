@@ -48,9 +48,11 @@ const sqlSlice = createSlice({
       if (isUser) {
         state.createRoleRoles = [];
         state.createRolePrivs = [];
+        state.createUserTable = [];
       } else {
         state.createUserRoles = [];
         state.createUserPrivs = [];
+        state.createUserTable = [];
       }
     },
     setGrantedPrivs(state, action) {
