@@ -2,7 +2,11 @@ import { Button, Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditUserRole, setGrantedRoles } from 'redux/slices/sql.slice';
+import {
+  grantAllRole,
+  setEditUserRole,
+  setGrantedRoles,
+} from 'redux/slices/sql.slice';
 
 function RoleGrantRevoke({ isEdit, isUser }) {
   const { roleList } = useSelector((state) => state.system);
@@ -20,7 +24,6 @@ function RoleGrantRevoke({ isEdit, isUser }) {
 
   const onRoleChecked = (roleName, columnVal, key) => {
     let newData = [...data];
-
     if (columnVal.key === 'default' && columnVal.value === true) {
       newData[key].default = true;
       newData[key].granted = true;
@@ -176,16 +179,98 @@ function RoleGrantRevoke({ isEdit, isUser }) {
     return () => {};
   }, []);
 
+  // event control option
+  const handleGrantAll = () => {
+    let newData = data.map((item) => ({ ...item, granted: true }));
+    dispatch(
+      grantAllRole({
+        list: newData.map((item) => ({
+          roleName: item.roleName,
+          granted: item.granted,
+          default: item.default,
+          admin: item.admin,
+        })),
+        isUser,
+      }),
+    );
+    setData(newData);
+  };
+
+  const handleRevokeAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: false,
+      admin: false,
+      default: false,
+    }));
+    dispatch(grantAllRole({ list: [], isUser }));
+    setData(newData);
+  };
+
+  const handleAdminAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: true,
+      admin: true,
+    }));
+    dispatch(grantAllRole({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleAdminNone = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      admin: false,
+    }));
+    dispatch(grantAllRole({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleDefaultAll = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      granted: true,
+      default: true,
+    }));
+    dispatch(grantAllRole({ list: newData, isUser }));
+    setData(newData);
+  };
+
+  const handleDefaultNone = () => {
+    let newData = data.map((item) => ({
+      ...item,
+      default: false,
+    }));
+    dispatch(grantAllRole({ list: newData, isUser }));
+    setData(newData);
+  };
+
   return (
     <div className="sa-grant-content">
       {/* control */}
       <div className="flex-center-start">
-        <Button type="default">Grant All</Button>
-        <Button type="default m-lr-8">Revoke All</Button>
-        <Button type="default">Admin All</Button>
-        <Button type="default m-lr-8">Admin None</Button>
-        <Button type="default">Default All</Button>
-        <Button type="default m-8">Default None</Button>
+        <Button type="default" onClick={handleGrantAll}>
+          Grant All
+        </Button>
+        <Button type="default m-lr-8" onClick={handleRevokeAll}>
+          Revoke All
+        </Button>
+        <Button type="default" onClick={handleAdminAll}>
+          Admin All
+        </Button>
+        <Button type="default m-lr-8" onClick={handleAdminNone}>
+          Admin None
+        </Button>
+        {isUser && (
+          <>
+            <Button type="default" onClick={handleDefaultAll}>
+              Default All
+            </Button>
+            <Button type="default m-8" onClick={handleDefaultNone}>
+              Default None
+            </Button>
+          </>
+        )}
       </div>
 
       {/* grant table */}
