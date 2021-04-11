@@ -99,7 +99,7 @@ function renderActiveComponent(key = 'dashboard', list = []) {
 
 function SystemAdmin() {
   const [inlineCollapsed, setInlineCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState('grant');
+  const [activeKey, setActiveKey] = useState('create-user');
   const { username } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
@@ -199,7 +199,7 @@ function SystemAdmin() {
           <Menu
             className="h-100"
             // defaultSelectedKeys={menuList[0].key}
-            defaultSelectedKeys="grant"
+            defaultSelectedKeys="create-user"
             inlineCollapsed={inlineCollapsed}
             mode="inline"
             theme="dark">

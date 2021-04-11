@@ -56,7 +56,9 @@ function SystemUserList() {
         setData([...newUserList]);
       }
     } catch (error) {
-      message.error('Xoá người dùng không thành công ! Thử lại.', 2);
+      if (error.response) {
+        message.error(error.response.data.message, 2);
+      } else message.error('Xoá người dùng không thành công ! Thử lại.', 2);
     }
   };
 

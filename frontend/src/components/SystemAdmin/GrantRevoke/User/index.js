@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, Select } from 'antd';
+import { Button, Checkbox, Form, Input, Select } from 'antd';
 import helper from 'helper';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,12 +17,13 @@ const formItemLayout = {
 
 let timeout = null;
 
-function UserGrantRevoke({ onCreateUser, isEdit, name }) {
+function UserGrantRevoke({ onCreateUser, isEdit, name, handleForm }) {
   const { tableSpaceList, tempTableSpaceList } = useSelector(
     (state) => state.system,
   );
   const { editedUserInfo } = useSelector((state) => state.userRole);
   const dispatch = useDispatch();
+  const [form] = Form.useForm();
   const initialForm = {
     username: isEdit ? name : '',
     password: '',
@@ -40,11 +41,14 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
     }, 500);
   };
 
+  handleForm(form);
+
   return (
     <div className="sa-grant-content">
       <Form
         {...formItemLayout}
         name="grant-form"
+        form={form}
         initialValues={initialForm}
         onFinish={(v) => onCreateUser(v)}>
         {/* username */}
@@ -91,7 +95,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
           ]}>
           <Input.Password maxLength={20} />
         </Form.Item>
-
         {/* confirm password */}
         <Form.Item
           label="Confirm Password"
@@ -111,7 +114,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
           hasFeedback>
           <Input.Password maxLength={20} />
         </Form.Item>
-
         {/* default table */}
         <Form.Item
           name="defaultTableSpace"
@@ -128,7 +130,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
             {helper.renderOptions(tableSpaceList)}
           </Select>
         </Form.Item>
-
         {/* temporary table */}
         <Form.Item
           name="tempTableSpace"
@@ -145,7 +146,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
             {helper.renderOptions(tempTableSpaceList)}
           </Select>
         </Form.Item>
-
         {/* locked account */}
         <Form.Item
           labelAlign="left"
@@ -155,7 +155,6 @@ function UserGrantRevoke({ onCreateUser, isEdit, name }) {
           valuePropName="checked">
           <Checkbox />
         </Form.Item>
-
         {/* edition enabled */}
         <Form.Item
           className="m-0"
@@ -175,10 +174,12 @@ UserGrantRevoke.propTypes = {
   onCreateUser: PropTypes.func,
   isEdit: PropTypes.bool,
   name: PropTypes.string,
+  handleForm: PropTypes.func,
 };
 
 UserGrantRevoke.defaultProps = {
   onCreateUser: () => {},
+  handleForm: () => {},
   isEdit: false,
   name: '',
 };

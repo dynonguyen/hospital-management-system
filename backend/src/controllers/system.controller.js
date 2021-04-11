@@ -139,7 +139,13 @@ exports.delUser = async (req, res, next) => {
 		if (result) return res.status(200).json({ message: 'success' });
 	} catch (error) {
 		console.error('DELETE USER ERROR: ', error);
-		return res.status(400).json({ message: 'failed' });
+		if (error.errorNum === 1940)
+			return res
+				.status(400)
+				.json({ message: 'Không thể xoá người dùng đang kết nối vào CSDL !' });
+		return res
+			.status(400)
+			.json({ message: 'Xoá người dùng không thành công ! Thử lại' });
 	} finally {
 		oracleConnect.close();
 	}
@@ -231,6 +237,10 @@ exports.postCreateRole = async (req, res, next) => {
 				message:
 					'Đã tồn tại username hoặc role trùng tên. Hãy đổi username khác!',
 			});
+		} else if (error.errorNum === 990) {
+			return res
+				.status(400)
+				.json({ message: 'ADMIN hiện tại không đủ quyền !' });
 		}
 		return res
 			.status(400)
@@ -284,6 +294,7 @@ exports.getUserRolePriv = async (req, res, next) => {
 		}
 	} catch (error) {
 		console.error('GET USER ROLE PRIV ERROR: ', error);
+
 		return res.status(400).json({ message: 'failed' });
 	} finally {
 		oracleConnect.close();

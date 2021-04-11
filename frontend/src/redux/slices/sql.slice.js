@@ -18,6 +18,7 @@ const sqlSlice = createSlice({
     createRoleName: '',
     editUserRole: [],
     editName: '',
+    createUserTable: [],
   },
   reducers: {
     setGrantedRoles(state, action) {
@@ -115,6 +116,36 @@ const sqlSlice = createSlice({
     setEditName(state, action) {
       state.editName = action.payload;
     },
+    setCreateUserTable(state, action) {
+      const { checked, tableName, key } = action.payload;
+      const index = state.createUserTable.findIndex(
+        (item) => item.tableName === tableName,
+      );
+      if (index === -1) {
+        let newRow = {
+          tableName,
+          select: false,
+          insert: false,
+          update: false,
+          delete: false,
+          grantOption: false,
+        };
+        newRow[key] = checked;
+        state.createUserTable.push(newRow);
+      } else {
+        state.createUserTable[index][key] = checked;
+      }
+    },
+    resetCreateUserInfo(state) {
+      state.createUserInfo = {
+        username: '',
+        password: '',
+        defaultTableSpace: '',
+        tempTableSpace: '',
+        isLocked: false,
+        isEdition: false,
+      };
+    },
   },
 });
 
@@ -127,5 +158,7 @@ export const {
   setCreateRoleName,
   setEditUserRole,
   setEditName,
+  setCreateUserTable,
+  resetCreateUserInfo,
 } = actions;
 export default reducer;

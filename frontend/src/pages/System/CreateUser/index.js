@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetGrantedRoles } from 'redux/slices/sql.slice';
 function CreateUser() {
   const dispatch = useDispatch();
-  const { createUserRoles, createUserPrivs } = useSelector(
+  const { createUserRoles, createUserPrivs, createUserTable } = useSelector(
     (state) => state.sql,
   );
   //  handle create user
@@ -20,9 +20,14 @@ function CreateUser() {
         1,
       );
       const privSql = helper.convertPrivSql(createUserPrivs, userInfo.username);
+      const privTable = helper.convertTablePrivilege(
+        createUserTable,
+        userInfo.username,
+        false,
+      );
       const createRes = await systemApi.postCreateUser(
         createUserSql,
-        [...roleSql.sqlList, ...privSql],
+        [...roleSql.sqlList, ...privSql, ...privTable],
         roleSql.defaultRole,
       );
 

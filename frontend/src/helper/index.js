@@ -172,6 +172,32 @@ function convertCreateUserInfo(userInfo) {
   }`;
 }
 
+// fn : Chuyển đổi table privilege
+function convertTablePrivilege(list = [], name, isRole = false) {
+  let sqlList = [];
+  list.forEach((item) => {
+    const {
+      tableName,
+      select,
+      delete: isDelete,
+      insert,
+      update,
+      grantOption,
+    } = item;
+    if (!select && !isDelete && !update && !insert) {
+    } else {
+      let sql = `GRANT${select ? ' SELECT' : ''}${update ? ', UPDATE' : ''}${
+        insert ? ', INSERT' : ''
+      }${isDelete ? ' , DELETE' : ''} ON ${tableName.toUpperCase()} TO ${
+        isRole ? name : `"${name}"`
+      }${grantOption ? ' WITH GRANT OPTION' : ''}`;
+
+      sqlList.push(sql.replace('GRANT,', 'GRANT'));
+    }
+  });
+  return sqlList;
+}
+
 export default {
   renderMenu,
   convertModalKeyItem,
@@ -182,4 +208,5 @@ export default {
   convertPrivSql,
   convertCreateUserInfo,
   convertGrantRevoke,
+  convertTablePrivilege,
 };

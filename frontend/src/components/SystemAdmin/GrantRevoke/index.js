@@ -6,7 +6,9 @@ import {
 } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { resetCreateUserInfo } from 'redux/slices/sql.slice';
 import './index.scss';
 import CreateRoleGrantRevoke from './Role';
 import RoleGrantRevoke from './RolePrivileges';
@@ -25,9 +27,15 @@ function GrantRevoke(props) {
     onCreateRole,
     onEditUserRolePriv,
   } = props;
+  const dispatch = useDispatch();
   const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
     isEdit ? username : ''
   }`;
+
+  const userForm = useRef(null);
+  const handleForm = (form) => {
+    userForm.current = form;
+  };
 
   const btnProps = isUser
     ? isEdit
@@ -36,6 +44,12 @@ function GrantRevoke(props) {
     : {
         onClick: onCreateRole,
       };
+
+  // reset create user form
+  const resetUserForm = () => {
+    userForm.current.resetFields();
+    dispatch(resetCreateUserInfo());
+  };
 
   return (
     <div className="p-32">
@@ -56,6 +70,7 @@ function GrantRevoke(props) {
                 onCreateUser={onCreateUser}
                 isEdit={isEdit}
                 name={username}
+                handleForm={handleForm}
               />
             ) : (
               <CreateRoleGrantRevoke
@@ -117,14 +132,17 @@ function GrantRevoke(props) {
 
         {/* button action */}
         <div className="t-right w-100">
-          <Button
-            type="dashed"
-            style={{ width: 200 }}
-            size="large"
-            danger
-            className="m-r-12">
-            Reset
-          </Button>
+          {isUser && !isEdit && (
+            <Button
+              type="dashed"
+              style={{ width: 200 }}
+              size="large"
+              danger
+              onClick={resetUserForm}
+              className="m-r-12">
+              Reset
+            </Button>
+          )}
           <Button
             type="primary"
             style={{ width: 200 }}
