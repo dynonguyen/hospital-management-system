@@ -199,9 +199,8 @@ function SystemUserList() {
                 setShowUserEdit({
                   visible: true,
                   username: record.USERNAME,
-                  isLocked: record.ACCOUNT_STATUS.toLowerCase().includes(
-                    'locked',
-                  ),
+                  isLocked:
+                    record.ACCOUNT_STATUS.toLowerCase().includes('locked'),
                 })
               }
               className="p-lr-12 action-icon edit"
@@ -269,7 +268,7 @@ function SystemUserList() {
       ) : (
         <div className="p-16">
           <Table
-            className="admin-box-sha"
+            bordered
             columns={columns}
             dataSource={data}
             pagination={{ className: 't-center p-tb-8' }}

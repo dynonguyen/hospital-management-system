@@ -25,7 +25,7 @@ function Navigation() {
       <nav>
         <ul className="control h-100 d-flex">
           <li className="control-item active">
-            <Tooltip title="Quản trị viên" placement="bottom">
+            <Tooltip title="Ban quản lý" placement="bottom">
               <img src={adminIcon} alt="Icon" />
               <h3>Quản lý</h3>
             </Tooltip>

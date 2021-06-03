@@ -2,6 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import routerConfig from 'configs/routerConfig';
+import constant from 'constant';
 import React, { Suspense, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -12,10 +13,11 @@ const { mainRoutes, systemRoutes, renderRoutes } = routerConfig;
 
 function App() {
   const { username, role } = useSelector((state) => state.user);
+
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const isAuth = username ? true : false;
-  const routes = role === 'sys_admin' ? systemRoutes : mainRoutes;
+  const routes = role === constant.ROLES.SYS_ADMIN ? systemRoutes : mainRoutes;
 
   // get user
   useEffect(() => {

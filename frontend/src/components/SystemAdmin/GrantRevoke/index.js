@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { resetCreateUserInfo } from 'redux/slices/sql.slice';
 import './index.scss';
@@ -27,6 +27,7 @@ function GrantRevoke(props) {
     onCreateRole,
     onEditUserRolePriv,
   } = props;
+  const [btnLoading, setBtnLoading] = useState(false);
   const dispatch = useDispatch();
   const title = `${isEdit ? 'Edit ' : 'Create '} ${isUser ? 'User' : 'Role'} ${
     isEdit ? username : ''
@@ -39,10 +40,32 @@ function GrantRevoke(props) {
 
   const btnProps = isUser
     ? isEdit
-      ? { onClick: onEditUserRolePriv }
-      : { htmlType: 'submit', form: 'grant-form' }
+      ? {
+          onClick: () => {
+            setBtnLoading(true);
+            onEditUserRolePriv();
+            setTimeout(() => {
+              setBtnLoading(false);
+            }, 500);
+          },
+        }
+      : {
+          htmlType: 'submit',
+          form: 'grant-form',
+          onClick: () => {
+            setBtnLoading(true);
+            setTimeout(() => {
+              setBtnLoading(false);
+            }, 500);
+          },
+        }
     : {
-        onClick: onCreateRole,
+        onClick: () => {
+          setBtnLoading(true);
+          setTimeout(() => {
+            setBtnLoading(false);
+          }, 500);
+        },
       };
 
   // reset create user form
@@ -145,6 +168,7 @@ function GrantRevoke(props) {
           )}
           <Button
             type="primary"
+            loading={btnLoading}
             style={{ width: 200 }}
             size="large"
             {...btnProps}

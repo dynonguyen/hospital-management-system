@@ -53,10 +53,10 @@ function convertModalKeyItem(key = 'admin') {
 // fn: phân tích role dựa theo role list
 function analystRole(roles) {
   if (!roles) return 'default';
-  const ROLE_LIST = constant.ROLES;
+
   for (let i = 0; i < roles.length; ++i) {
-    for (let j = 0; j < ROLE_LIST.length; ++j) {
-      if (roles[i].toLowerCase() === ROLE_LIST[j].toLowerCase()) {
+    for (let k in constant.ROLES) {
+      if (roles[i].toLowerCase() === constant.ROLES[k].toLowerCase()) {
         return roles[i].toLowerCase();
       }
     }
@@ -200,13 +200,8 @@ function convertTablePrivilege(list = [], name, isRole = false) {
 
 // fn : convert alter user/role
 function convertAlterUserRole(username, userInfo) {
-  const {
-    password,
-    defaultTableSpace,
-    tempTableSpace,
-    isLocked,
-    isEdition,
-  } = userInfo;
+  const { password, defaultTableSpace, tempTableSpace, isLocked, isEdition } =
+    userInfo;
 
   return `ALTER USER "${username}"${
     password !== '' ? ` IDENTIFIED BY "${password}"` : ''

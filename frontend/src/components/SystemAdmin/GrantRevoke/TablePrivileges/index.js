@@ -4,30 +4,6 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { grantAllTable, setCreateUserTable } from 'redux/slices/sql.slice';
 
-const expandColumns = [
-  {
-    title: 'Column',
-    dataIndex: 'columnName',
-    key: 'columnName',
-    sorter: (a, b) =>
-      a.columnName < b.columnName ? -1 : a.columnName > b.columnName ? 1 : 0,
-  },
-  {
-    title: 'Select',
-    dataIndex: 'select',
-    key: 'select',
-    render: (value) => <Checkbox defaultChecked={value} />,
-    sorter: (a, b) => a.select - b.select,
-  },
-  {
-    title: 'Update',
-    dataIndex: 'update',
-    key: 'update',
-    render: (value) => <Checkbox defaultChecked={value} />,
-    sorter: (a, b) => a.update - b.update,
-  },
-];
-
 function TablePrivGrantRevoke({ isUser, isEdit }) {
   const dispatch = useDispatch();
   const { grantedTable } = useSelector((state) => state.userRole);
@@ -65,7 +41,43 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
         }));
   });
 
+  const [expandData, setExpandData] = useState(() => {
+    let newData = {};
+    for (const key in colTableList) {
+      newData[key] = colTableList[key].map((item, index) => ({
+        key: index,
+        tableName: key,
+        selectDisabled: false,
+        updateDisabled: false,
+        columnName: item,
+        select: false,
+        update: false,
+      }));
+    }
+    return newData;
+  });
+
   const onTableChecked = (checked, tableName, key) => {
+    // check select, update on row then check all in column
+    if (key === 'select') {
+      let newData = { ...expandData };
+      newData[tableName] = newData[tableName].map((item) => ({
+        ...item,
+        select: checked,
+        selectDisabled: checked,
+      }));
+      setExpandData(newData);
+    } else if (key === 'update') {
+      let newData = { ...expandData };
+      newData[tableName] = newData[tableName].map((item) => ({
+        ...item,
+        update: checked,
+        updateDisabled: checked,
+      }));
+      setExpandData(newData);
+    }
+
+    // dispatch action
     dispatch(setCreateUserTable({ checked, tableName, key }));
     setDataMainTable(
       dataMainTable.map((item) =>
@@ -74,6 +86,7 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
     );
   };
 
+  // main column of table
   let mainColumns = [
     {
       title: 'Table',
@@ -151,21 +164,48 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
       ),
     });
 
+  // expand column of table
+  const onExpandChange = (record) => {};
+
+  const expandColumns = [
+    {
+      title: 'Column',
+      dataIndex: 'columnName',
+      key: 'columnName',
+      sorter: (a, b) =>
+        a.columnName < b.columnName ? -1 : a.columnName > b.columnName ? 1 : 0,
+    },
+    {
+      title: 'Select',
+      dataIndex: 'select',
+      key: 'select',
+      render: (value, record) => (
+        <Checkbox
+          onChange={(e) => onExpandChange(record)}
+          disabled={record.selectDisabled}
+          checked={value}
+        />
+      ),
+      sorter: (a, b) => a.select - b.select,
+    },
+    {
+      title: 'Update',
+      dataIndex: 'update',
+      key: 'update',
+      render: (value, record) => (
+        <Checkbox disabled={record.updateDisabled} checked={value} />
+      ),
+      sorter: (a, b) => a.update - b.update,
+    },
+  ];
+
   //  columns table of table
   const expandedRowRender = (e) => {
     const { tableName } = e;
-
-    const expandData = colTableList[tableName].map((item, key) => ({
-      key,
-      columnName: item,
-      select: false,
-      update: false,
-    }));
-
     return (
       <Table
         columns={expandColumns}
-        dataSource={expandData}
+        dataSource={expandData[tableName]}
         pagination={false}
       />
     );
@@ -181,8 +221,21 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
       delete: true,
       grantOption: true,
     }));
+    let newExpandData = {};
+    for (const key in colTableList) {
+      newExpandData[key] = colTableList[key].map((item, index) => ({
+        key: index,
+        tableName: key,
+        selectDisabled: true,
+        updateDisabled: true,
+        columnName: item,
+        select: true,
+        update: true,
+      }));
+    }
     dispatch(grantAllTable(newData));
     setDataMainTable(newData);
+    setExpandData(newExpandData);
   };
 
   const handleRevokeAll = () => {
@@ -194,8 +247,21 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
       delete: false,
       grantOption: false,
     }));
+    let newExpandData = {};
+    for (const key in colTableList) {
+      newExpandData[key] = colTableList[key].map((item, index) => ({
+        key: index,
+        tableName: key,
+        selectDisabled: false,
+        updateDisabled: false,
+        columnName: item,
+        select: false,
+        update: false,
+      }));
+    }
     dispatch(grantAllTable(newData));
     setDataMainTable(newData);
+    setExpandData(newExpandData);
   };
 
   const handleSelectAll = (isGrant = true) => {
@@ -203,8 +269,17 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
       ...item,
       select: isGrant,
     }));
+    let newExpandData = {};
+    for (const key in colTableList) {
+      newExpandData[key] = expandData[key].map((item, index) => ({
+        ...item,
+        select: isGrant,
+        selectDisabled: isGrant,
+      }));
+    }
     dispatch(grantAllTable(newData));
     setDataMainTable(newData);
+    setExpandData(newExpandData);
   };
 
   const handleInsertAll = (isGrant = true) => {
@@ -221,8 +296,17 @@ function TablePrivGrantRevoke({ isUser, isEdit }) {
       ...item,
       update: isGrant,
     }));
+    let newExpandData = {};
+    for (const key in colTableList) {
+      newExpandData[key] = expandData[key].map((item, index) => ({
+        ...item,
+        update: isGrant,
+        updateDisabled: isGrant,
+      }));
+    }
     dispatch(grantAllTable(newData));
     setDataMainTable(newData);
+    setExpandData(newExpandData);
   };
 
   const handleDeleteAll = (isGrant = true) => {
