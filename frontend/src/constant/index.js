@@ -14,7 +14,7 @@ export default {
 
   ROLES: {
     SYS_ADMIN: 'sys_admin',
-    HR: 'hr',
+    HR: 'hr_manager',
     ACCOUNTING_MANAGER: 'accounting_manager',
     SPECIALIZE_MANAGER: 'specialize_manager',
     RECEPTIONIST: 'receptionist',
