@@ -429,3 +429,15 @@ ELSE IF DELETING THEN
   INSERT INTO AUDIT_TABLE VALUES (NULL, :OLD.AUDIT_TABLE, V_USER, V_DATE, 'DELETE');
 END IF;
 END
+
+--FINE-GRAINED AUDITING
+--giam sat cac hoat dong insert, update, delete tren cac user cua ADMIN_BV
+BEGIN
+  sys.dbms_fga.add_policy(
+    object_name => 'dba_users',
+    policy_name => 'ADMIN_FGA',
+    enable => true,
+    statement_types => 'INSERT, UPDATE, DELETE',
+    audit_trail => dbms_fga.db
+    );
+END;
