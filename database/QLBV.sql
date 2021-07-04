@@ -212,4 +212,4 @@ ALTER TABLE Invoices
 	ADD CONSTRAINT Fk_Inviuces_Anamnesi FOREIGN KEY ( Anamnesis_Id )
 		REFERENCES Anamnesis ( Anamnesis_Id );
       
-
+ALTER TABLE EMPLOYEES ADD Branch INTEGER;
