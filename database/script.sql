@@ -444,3 +444,92 @@ BEGIN
     audit_trail => dbms_fga.db
     );
 END;
+
+-- MA HOA
+-- xoa bang luu key
+DROP TABLE NHOM22_K;
+-- tao bang luu key
+CREATE TABLE NHOM22_K
+(
+  NAME   VARCHAR2(100 BYTE),
+  VALUE  NVARCHAR2(100)
+);
+ 
+INSERT INTO NHOM22_K
+   SELECT 'key' NAME,
+          RAWTOHEX ('52AB32;^$!ER94988OPS3W21') VALUE
+     FROM DUAL
+   UNION
+   SELECT 'iv' NAME, RAWTOHEX ('TY54ABCX') VALUE FROM DUAL;
+ 
+COMMIT;
+
+-- ham ma hoa --
+CREATE OR REPLACE FUNCTION F_ENCRYPT (p_input VARCHAR2)
+   RETURN VARCHAR2
+AS
+   v_encrypted_raw     RAW (2000);
+   v_key               RAW (320);
+   v_encryption_type   PLS_INTEGER
+      :=   DBMS_CRYPTO.DES_CBC_PKCS5;
+   v_iv                RAW (320);
+BEGIN
+   SELECT VALUE
+     INTO v_key
+     FROM NHOM22_K
+    WHERE name = 'key';
+ 
+   SELECT VALUE
+     INTO v_iv
+     FROM NHOM22_K
+    WHERE name = 'iv';
+ 
+   v_encrypted_raw :=
+      DBMS_CRYPTO.encrypt (src   => UTL_I18N.STRING_TO_RAW (p_input, 'AL32UTF8'),
+                           typ   => v_encryption_type,
+                           key   => v_key,
+                           iv    => v_iv);
+   RETURN UTL_RAW.CAST_TO_VARCHAR2 (UTL_ENCODE.base64_encode (v_encrypted_raw));
+END;
+
+-- ham giai ma --
+CREATE OR REPLACE FUNCTION F_DECRYPT (p_input VARCHAR2)
+   RETURN VARCHAR2
+AS
+   v_decrypted_raw     RAW (2000);
+   v_key               RAW (320);
+   v_encryption_type   PLS_INTEGER := DBMS_CRYPTO.DES_CBC_PKCS5;
+   v_iv                RAW (320);
+BEGIN
+   SELECT VALUE
+     INTO v_key
+     FROM NHOM22_K
+    WHERE name = 'key';
+ 
+   SELECT VALUE
+     INTO v_iv
+     FROM NHOM22_K
+    WHERE name = 'iv';
+ 
+ 
+   v_decrypted_raw :=
+      DBMS_CRYPTO.DECRYPT (
+         src   => UTL_ENCODE.base64_decode (UTL_RAW.CAST_TO_RAW (p_input)),
+         typ   => v_encryption_type,
+         key   => v_key,
+         iv    => v_iv);
+ 
+ 
+   RETURN UTL_I18N.RAW_TO_CHAR (v_decrypted_raw, 'AL32UTF8');
+END;
+
+-- ma hoa cot ma BHYT trong bang Patients
+UPDATE Patients SET HEALTH_INSURANCE_ID = F_ENCRYPT(HEALTH_INSURANCE_ID);
+
+-- test ma hoa
+select * from patients
+
+SELECT '427862133' INPUT, 
+        F_ENCRYPT('427862133') ENCRYPTED_RESULT,
+        F_DECRYPT(F_ENCRYPT('427862133')) DECRYPT_RESULT 
+FROM DUAL;
