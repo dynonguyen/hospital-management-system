@@ -91,7 +91,7 @@ CREATE TABLE Patients (
 	Patient_Age      INTEGER NOT NULL,
 	Patient_Phone    CHAR(10),
 	Patient_Address  NVARCHAR2(100) NOT NULL,
-	Health_Insurance_Id VARCHAR(14),
+	Health_Insurance_Id VARCHAR(50),
 	CONSTRAINT Pk_Patients PRIMARY KEY (Patient_Id),
 	CONSTRAINT U_Patient UNIQUE(Patient_Name, Patient_Address)
 );

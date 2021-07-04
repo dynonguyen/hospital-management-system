@@ -895,8 +895,9 @@ COMMIT;
 
 ---AUDIT
 --STANDARD AUDIT
+-- Giam sat cac hanh dong them, xoa, sua tren bang employees va bang dba_users
 AUDIT INSERT, UPDATE, DELETE ON SYS.employees BY ACCESS;
-AUDIT ALTER, DROP USER BY ACCESS;
+AUDIT INSERT, UPDATE, DELETE ON SYS.dba_users BY ACCESS;
 
 --Audit VOI TRIGGER TREN BANG EMPLOYEES
 DROP TABLE AUDIT_TABLE
@@ -1018,6 +1019,8 @@ END;
 
 -- ma hoa cot ma BHYT trong bang Patients
 UPDATE Patients SET HEALTH_INSURANCE_ID = F_ENCRYPT(HEALTH_INSURANCE_ID);
+-- giai ma cot ma BHYT trong bang Patients
+UPDATE Patients SET HEALTH_INSURANCE_ID = F_DECRYPT(HEALTH_INSURANCE_ID);
 
 -- test ma hoa
 select * from patients
