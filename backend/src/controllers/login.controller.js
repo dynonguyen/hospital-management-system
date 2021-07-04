@@ -7,6 +7,7 @@ const getUserRole = async (oracle) => {
 		const getUserRes = await oracle.execute(
 			`SELECT sys_context('USERENV', 'CURRENT_USER') as CURRENT_USER FROM dual`,
 		);
+
 		const currentUser = getUserRes.rows[0].CURRENT_USER;
 
 		// get role of user

@@ -8,6 +8,7 @@ export const getUser = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const result = await loginApi.getUser();
+
       if (result) {
         const { username, roles } = result.data;
         thunkAPI.dispatch(setUser({ username, roles }));

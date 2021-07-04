@@ -147,11 +147,11 @@ function SQLTab({ isUser, isEdit }) {
             </>
           )}
           {/* granted/revoke roles */}
-          {editUserRole.length > 0 && (
+          {createUserTable.length > 0 && (
             <>
               <h3 className="sql-grant-title">------ GRANTED/REVOKE ROLES: </h3>
               {helper
-                .convertGrantRevoke(editUserRole, editName)
+                .convertTablePrivilege(createUserTable, editName, true)
                 .map((item, key) => (
                   <p key={key} className="sql-grant-code granted-roles">
                     {item};
